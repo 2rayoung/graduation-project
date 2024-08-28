@@ -1,31 +1,76 @@
 import React, { useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import ReceiptInput from './ReceiptInput';  // 모달 컴포넌트 import
+import HeaderRightIcon from './HeaderRightIcon'; // HeaderRightIcon 컴포넌트 import
 
 export default function FoodList({ navigation }) {
+  const [foods, setFoods] = useState([
+    { id: '1', name: '양파', storage: 'room', expiry: '2024-08-15', image: require('../assets/onion.png') },
+    { id: '2', name: '당근', storage: 'fridge', expiry: '2024-08-12', image: require('../assets/carrot1.png') },
+    { id: '3', name: '파프리카', storage: 'freezer', expiry: '2024-07-29', image: require('../assets/pepper.png') },
+    { id: '4', name: '청양고추', storage: 'fridge', expiry: '2024-09-03', image: require('../assets/chilli.png') },
+  ]);
+
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
-  const foods = [
-    { id: '1', name: '양파', storage: 'room', expiry: '24-07-29', image: require('../assets/onion.png') },
-    { id: '2', name: '당근', storage: 'fridge', expiry: '24-08-12', image: require('../assets/carrot1.png') },
-    { id: '3', name: '파프리카', storage: 'freezer', expiry: '24-07-29', image: require('../assets/pepper.png') },
-    { id: '4', name: '청양고추', storage: 'fridge', expiry: '24-07-29', image: require('../assets/chilli.png') },
-  ];
+  const [modalVisible, setModalVisible] = useState(false);  // 모달 가시성 상태 추가
 
-  const filteredFoods = foods.filter(food => filter === 'all' || food.storage === filter);
+  // 필터와 검색어에 따라 음식 목록 필터링
+  const filteredFoods = foods.filter(food => 
+    (filter === 'all' || food.storage === filter) &&
+    food.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const sortByExpiry = () => {
+    const sorted = [...foods].sort((a, b) => new Date(a.expiry) - new Date(b.expiry));
+    setFoods(sorted);
+  };
+
+  const sortByRegistration = () => {
+    // 예시로, id 순으로 정렬하는 것을 가정합니다.
+    const sorted = [...foods].sort((a, b) => a.id.localeCompare(b.id));
+    setFoods(sorted);
+  };
+
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderRightIcon 
+          onSortByExpiry={sortByExpiry} 
+          onSortByRegistration={sortByRegistration} 
+        />
+      ),
+    });
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>조회</Text>
         <TouchableOpacity style={styles.menuButton}>
+          {/* Menu icon can be added here if needed */}
         </TouchableOpacity>
       </View>
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search"
-        value={search}
-        onChangeText={setSearch}
-      />
+      
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search"
+          value={search}
+          onChangeText={setSearch}
+        />
+      </View>
+
+      {/* Filter Buttons */}
       <View style={styles.filterButtons}>
         <TouchableOpacity onPress={() => setFilter('all')} style={[styles.filterButton, filter === 'all' && styles.selected]}>
           <Text style={styles.filterButtonText}>전체</Text>
@@ -40,6 +85,8 @@ export default function FoodList({ navigation }) {
           <Text style={styles.filterButtonText}>실온</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Food List */}
       <FlatList
         data={filteredFoods}
         renderItem={({ item }) => (
@@ -56,9 +103,14 @@ export default function FoodList({ navigation }) {
         keyExtractor={(item) => item.id}
         style={styles.foodList}
       />
-      <TouchableOpacity onPress={() => navigation.navigate('ReceiptInput')} style={styles.addButton}>
+
+      {/* Add Button to Open Modal */}
+      <TouchableOpacity onPress={openModal} style={styles.addButton}>
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
+
+      {/* Modal Component */}
+      <ReceiptInput visible={modalVisible} onClose={closeModal} navigation={navigation} />
     </View>
   );
 }
@@ -67,7 +119,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 14,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
   },
   header: {
     flexDirection: 'row',
@@ -76,23 +128,31 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
+    marginTop: -5,
     fontSize: 24,
     fontWeight: 'bold',
   },
   menuButton: {
     padding: 10,
   },
-  menuIcon: {
-    width: 28,
-    height: 27,
-  },
-  searchBar: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingLeft: 8,
-    marginBottom: 16,
+  searchContainer: {
+    marginBottom: 20,
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    paddingVertical: 5,
   },
   filterButtons: {
     flexDirection: 'row',
@@ -100,12 +160,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   filterButton: {
+    flex: 0.2,
     padding: 10,
     borderRadius: 8,
     backgroundColor: '#ddd',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   selected: {
-    backgroundColor: '#0a84ff',
+    backgroundColor: '#667080',
   },
   filterButtonText: {
     color: '#fff',
@@ -117,11 +180,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderBottomWidth: 1,
     borderBottomColor: 'grey',
     borderRadius: 8,
     marginBottom: 8,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    elevation: 3,
   },
   foodImage: {
     width: 54,
@@ -141,12 +208,12 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: 'absolute',
-    right: 20,
-    bottom: 90,
+    right: 22,
+    bottom: 40,
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#0a84ff',
+    backgroundColor: '#667080',
     justifyContent: 'center',
     alignItems: 'center',
   },

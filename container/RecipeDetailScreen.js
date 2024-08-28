@@ -39,9 +39,6 @@ export default function RecipeDetailScreen({ route, navigation }) {
           4. 국물이 반 정도 졸아들면 불을 끄고 통깨를 뿌린다.
         </Text>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleMaterialManagementPress}>
-        <Text style={styles.buttonText}>재료 관리 방법 보기</Text>
-      </TouchableOpacity>
       <TouchableOpacity style={[styles.button, styles.videoButton]} onPress={handleVideoPress}>
         <Text style={styles.buttonText}>영상 보기</Text>
       </TouchableOpacity>
@@ -86,13 +83,13 @@ const styles = StyleSheet.create({
   button: {
     padding: 15,
     borderRadius: 8,
-    backgroundColor: '#0a84ff',
+    backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 8,
   },
   videoButton: {
-    backgroundColor: '#ff6347', // Tomato color for video button
+    backgroundColor: '#667080', // Tomato color for video button
   },
   buttonText: {
     color: '#fff',

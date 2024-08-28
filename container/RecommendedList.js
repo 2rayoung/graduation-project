@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   recipeItem: {
-    padding: 20,
+    padding: 40,
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     marginBottom: 15,

@@ -1,6 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function AddFoodScreen({ route, navigation }) {
   const { mode } = route.params || {};
@@ -8,6 +8,7 @@ export default function AddFoodScreen({ route, navigation }) {
   const [quantity, setQuantity] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [storageType, setStorageType] = useState('room');
+  const [price, setPrice] = useState(''); // 가격 상태 추가
 
   useEffect(() => {
     if (mode === 'takePhoto') {
@@ -28,7 +29,6 @@ export default function AddFoodScreen({ route, navigation }) {
       console.log('Photo URI:', result.uri);
     }
     navigation.setParams({ mode: null }); // Reset mode
-    navigation.navigate('ReceiptInput'); // Return to ReceiptInput
   };
 
   const handleChooseFromGallery = async () => {
@@ -42,20 +42,19 @@ export default function AddFoodScreen({ route, navigation }) {
       console.log('Gallery URI:', result.uri);
     }
     navigation.setParams({ mode: null }); // Reset mode
-    navigation.navigate('ReceiptInput'); // Return to ReceiptInput
   };
 
   const handleManualInput = () => {
-    // Handle manual input logic here
     const data = {
       foodName,
       quantity,
       expiryDate,
       storageType,
+      price,
     };
     console.log('Manual Input Data:', data);
     Alert.alert('식품 추가 완료', '직접 입력이 완료되었습니다.');
-    navigation.navigate('ReceiptInput'); // Return to ReceiptInput
+    navigation.navigate('FoodList'); // Return to FoodList
   };
 
   return (
@@ -65,14 +64,14 @@ export default function AddFoodScreen({ route, navigation }) {
         style={styles.input}
         value={foodName}
         onChangeText={setFoodName}
-        placeholder="식품 이름을 입력하세요"
+        placeholder="식품 이름을 입력하세요."
       />
       <Text style={styles.label}>수량</Text>
       <TextInput
         style={styles.input}
         value={quantity}
         onChangeText={setQuantity}
-        placeholder="수량을 입력하세요"
+        placeholder="수량을 입력하세요."
         keyboardType="numeric"
       />
       <Text style={styles.label}>유통기한</Text>
@@ -80,7 +79,14 @@ export default function AddFoodScreen({ route, navigation }) {
         style={styles.input}
         value={expiryDate}
         onChangeText={setExpiryDate}
-        placeholder="유통기한을 입력하세요 (YYYY-MM-DD)"
+        placeholder="유통기한을 입력하세요. (YYYY-MM-DD)"
+      />
+      <Text style={styles.label}>가격</Text>
+      <TextInput
+        style={styles.input}
+        value={price}
+        onChangeText={setPrice}
+        placeholder="가격을 입력하세요."
       />
       <Text style={styles.label}>보관 유형</Text>
       <View style={styles.pickerContainer}>
@@ -109,7 +115,11 @@ export default function AddFoodScreen({ route, navigation }) {
           </Text>
         </TouchableOpacity>
       </View>
-      <Button title="추가하기" onPress={handleManualInput} />
+      
+      {/* 추가하기 버튼 */}
+      <TouchableOpacity style={styles.addButton} onPress={handleManualInput}>
+        <Text style={styles.addButtonText}>추가하기</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -144,12 +154,24 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
   },
   pickerButtonSelected: {
-    backgroundColor: '#0a84ff',
+    backgroundColor: '#667080',
   },
   pickerButtonText: {
     color: 'gray',
   },
   pickerButtonTextSelected: {
     color: '#fff',
+  },
+  addButton: {
+    backgroundColor: '#667080', // 버튼의 배경색
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  addButtonText: {
+    color: '#fff', // 버튼 텍스트 색상
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

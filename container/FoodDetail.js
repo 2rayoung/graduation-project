@@ -7,9 +7,9 @@ export default function FoodDetail({ route, navigation }) {
   const [consumptionValue, setConsumptionValue] = React.useState(0);
 
   const foods = [
-    { id: '1', name: '양파', expiry: '24-05-16', image: require('../assets/onion.png') },
-    { id: '2', name: '당근', expiry: '24-05-12', image: require('../assets/carrot1.png') },
-    { id: '3', name: '파프리카', expiry: '24-05-10', image: require('../assets/pepper.png') },
+    { id: '1', name: '양파', expiry: '2024-08-15', image: require('../assets/onion.png') },
+    { id: '2', name: '당근', expiry: '2024-08-12', image: require('../assets/carrot1.png') },
+    { id: '3', name: '파프리카', expiry: '2024-07-29', image: require('../assets/pepper.png') },
   ];
 
   const food = foods.find(f => f.id === foodId);
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   actionButton: {
     padding: 10,
     borderRadius: 8,
-    backgroundColor: '#0a84ff',
+    backgroundColor: '#667080',
     alignItems: 'center',
     flex: 1,
     margin: 5,

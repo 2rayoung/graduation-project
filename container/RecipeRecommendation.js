@@ -1,18 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput } from 'react-native';
 
 export default function RecipeRecommendationScreen({ navigation }) {
+  const [search, setSearch] = useState(''); // 검색어 상태 추가
+
   const handlePress = (type) => {
     navigation.navigate('RecommendedList', { type });
   };
 
   return (
     <View style={styles.container}>
+      {/* Header with Title */}
+      <View style={styles.header}>
+        <Text style={styles.title}>레시피 추천</Text>
+        <TouchableOpacity style={styles.menuButton}>
+          {/* 필요한 경우 여기에 메뉴 버튼 또는 다른 아이콘을 추가할 수 있습니다. */}
+        </TouchableOpacity>
+      </View>
+
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <TextInput
           placeholder="Search"
           style={styles.searchInput}
+          value={search} // 검색어 상태 바인딩
+          onChangeText={setSearch} // 검색어 업데이트 함수
         />
       </View>
 
@@ -41,8 +53,22 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#F5F5F5',
   },
-  searchContainer: {
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 20,
+  },
+  title: {
+    marginTop: -5,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  menuButton: {
+    // 메뉴 버튼에 대한 스타일을 여기에 추가할 수 있습니다.
+  },
+  searchContainer: {
+    marginBottom: 30,
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
     paddingHorizontal: 10,
@@ -63,7 +89,7 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
+    padding: 40,
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     marginBottom: 15,

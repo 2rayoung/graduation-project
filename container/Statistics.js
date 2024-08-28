@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { PieChart } from 'react-native-svg-charts';
 import { G, Line, Circle, Text as SVGText } from 'react-native-svg';
 import { useIsFocused } from '@react-navigation/native';
@@ -83,23 +83,29 @@ export default function StatisticsScreen({ route }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>통계</Text>
+      
+      {/* 커스텀 버튼 컨테이너 */}
       <View style={styles.buttonContainer}>
-        <Button
-          title="소비"
+        <TouchableOpacity 
+          style={[styles.filterButton, selectedIndex === 0 && styles.selected]}
           onPress={() => setSelectedIndex(0)}
-          color={selectedIndex === 0 ? '#ff6347' : '#ccc'}
-        />
-        <Button
-          title="배출"
+        >
+          <Text style={styles.filterButtonText}>소비</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.filterButton, selectedIndex === 1 && styles.selected]}
           onPress={() => setSelectedIndex(1)}
-          color={selectedIndex === 1 ? '#6a1b9a' : '#ccc'}
-        />
-        <Button
-          title="비용"
+        >
+          <Text style={styles.filterButtonText}>배출</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.filterButton, selectedIndex === 2 && styles.selected]}
           onPress={() => setSelectedIndex(2)}
-          color={selectedIndex === 2 ? '#1e88e5' : '#ccc'}
-        />
+        >
+          <Text style={styles.filterButtonText}>비용</Text>
+        </TouchableOpacity>
       </View>
+
       <PieChart
         style={{ height: 200 }}
         valueAccessor={({ item }) => item.amount}
@@ -109,6 +115,7 @@ export default function StatisticsScreen({ route }) {
       >
         <Labels />
       </PieChart>
+
       <View style={styles.legendContainer}>
         {data.map((item) => (
           <View key={item.key} style={styles.legendItem}>
@@ -125,18 +132,34 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
   },
   title: {
+    marginTop: -10,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 20,
+    paddingHorizontal: 10,
+  },
+  filterButton: {
+    flex: 0.2,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: '#ddd',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selected: {
+    backgroundColor: '#667080',
+  },
+  filterButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   legendContainer: {
     marginTop: 20,

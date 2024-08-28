@@ -23,7 +23,13 @@ const Stack = createStackNavigator();
 
 function FoodListStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: '#F5F5F5' }, // 헤더 배경색
+        headerTintColor: '#000000', // 헤더 텍스트 색상
+        headerTitleStyle: { fontWeight: 'bold' }, // 헤더 텍스트 스타일
+      }}
+    >
       <Stack.Screen 
         name="FoodList" 
         component={FoodListScreen}
@@ -34,45 +40,28 @@ function FoodListStack() {
       <Stack.Screen 
         name="FoodDetail" 
         component={FoodDetailScreen} 
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />,
-        })}
       />
       <Stack.Screen 
         name="AddFood" 
         component={AddFoodScreen} 
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />,
-        })}
       />
       <Stack.Screen 
         name="PrepMethod" 
         component={PrepMethodScreen} 
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />,
-        })}
       />
       <Stack.Screen 
         name="StoreMethod" 
         component={StoreMethodScreen} 
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />,
-        })}
       />
       <Stack.Screen 
         name="ReceiptInput" 
         component={ReceiptInputScreen} 
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />,
-        })}
       />
       <Stack.Screen 
         name="MaterialManagement" 
         component={MaterialManagementScreen} 
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />,
-        })}
       />
+
       <Stack.Screen 
         name="RecipeDetail" // Bu yerda RecipeDetail qo'shildi
         component={RecipeDetailScreen} 
@@ -86,34 +75,28 @@ function FoodListStack() {
 
 function RecipeRecommendationStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: '#F5F5F5' }, // 헤더 배경색
+        headerTintColor: '#000000', // 헤더 텍스트 색상
+        headerTitleStyle: { fontWeight: 'bold' }, // 헤더 텍스트 스타일
+      }}
+    >
       <Stack.Screen 
         name="RecipeRecommendation" 
         component={RecipeRecommendationScreen}
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />, // HeaderRightIcon qo'shildi
-        })}
       />
       <Stack.Screen 
         name="RecommendedList" 
         component={RecommendedListScreen} 
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />,
-        })}
       />
       <Stack.Screen 
         name="MaterialManagement" 
         component={MaterialManagementScreen} 
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />,
-        })}
       />
       <Stack.Screen 
         name="RecipeDetail" // Bu yerda RecipeDetail qo'shildi
         component={RecipeDetailScreen} 
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />,
-        })}
       />
     </Stack.Navigator>
   );
@@ -121,13 +104,16 @@ function RecipeRecommendationStack() {
 
 function StatisticsStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: '#F5F5F5' }, // 헤더 배경색
+        headerTintColor: '#000000', // 헤더 텍스트 색상
+        headerTitleStyle: { fontWeight: 'bold' }, // 헤더 텍스트 스타일
+      }}
+    >
       <Stack.Screen 
         name="Statistics" 
         component={StatisticsScreen} 
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />, // HeaderRightIcon qo'shildi
-        })}
       />
     </Stack.Navigator>
   );
@@ -135,7 +121,12 @@ function StatisticsStack() {
 
 function MainTabs() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+      tabBarActiveTintColor: '#000000',   // 선택된 탭의 아이콘 및 텍스트 색상
+      tabBarInactiveTintColor: 'lightgray', // 비활성화된 탭의 아이콘 및 텍스트 색상
+  }}
+>
       <Tab.Screen 
         name="FoodListStack" 
         component={FoodListStack} 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, Image } from 'react-native';
 
-export default function HeaderRightIcon() {
+export default function HeaderRightIcon({ onSortByRegistration, onSortByExpiry }) {
   const [modalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
@@ -10,7 +10,7 @@ export default function HeaderRightIcon() {
 
   return (
     <>
-      <TouchableOpacity onPress={toggleModal} style={{ paddingRight: 20, paddingTop:20 }}>
+      <TouchableOpacity onPress={toggleModal} style={{ paddingRight: 20, paddingTop: 0 }}>
         <Image source={require('../assets/options.png')} style={{ width: 28, height: 26 }} />
       </TouchableOpacity>
 
@@ -23,15 +23,23 @@ export default function HeaderRightIcon() {
         }}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <View style={{ width: 300, backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Options</Text>
-            <TouchableOpacity onPress={() => { console.log("Login pressed"); }}>
-              <Text style={{ marginVertical: 10 }}>Login</Text>
+            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>메뉴</Text>
+            <TouchableOpacity 
+              onPress={() => { 
+                onSortByRegistration(); 
+                toggleModal(); 
+              }}>
+              <Text style={{ marginVertical: 10 }}>등록 순</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { console.log("About pressed"); }}>
-              <Text style={{ marginVertical: 10 }}>About</Text>
+            <TouchableOpacity 
+              onPress={() => { 
+                onSortByExpiry(); 
+                toggleModal(); 
+              }}>
+              <Text style={{ marginVertical: 10 }}>유통기한 순</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={toggleModal}>
-              <Text style={{ color: 'red', marginVertical: 10 }}>Close</Text>
+              <Text style={{ color: 'red', marginVertical: 10 }}>닫기</Text>
             </TouchableOpacity>
           </View>
         </View>
