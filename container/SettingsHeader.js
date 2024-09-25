@@ -18,7 +18,6 @@ import StatisticsScreen from './container/Statistics';
 import StoreMethodScreen from './container/StoreMethod';
 import SplashScreenComponent from './screens/SplashScreen';
 import AlarmSettingsScreen from './container/AlarmSettingsScreen'; // 알림 설정 화면 추가
-import SelectedIngredientsScreen from './container/SelectedIngredients'; // 선택된 재료 화면 추가
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -51,11 +50,6 @@ function FoodListStack() {
         options={({ navigation }) => ({
           headerRight: () => <HeaderRightIcon navigation={navigation} />,
         })}
-      />
-      <Stack.Screen 
-        name="SelectedIngredients" 
-        component={SelectedIngredientsScreen} 
-        options={{ title: '선택된 재료' }}  // 선택된 재료 화면 추가
       />
     </Stack.Navigator>
   );
@@ -94,18 +88,13 @@ function StatisticsStack() {
           headerRight: () => (
             <TouchableOpacity onPress={() => navigation.navigate('AlarmSettingsScreen')}>
               <Image
-                source={require('./assets/settings-icon.png')} 
-                style={{ width: 24, height: 24, marginRight: 10 }}
+                source={require('./assets/settings-icon.png')} style={{ width: 24, height: 24 , marginRight: 10 }}
               />
             </TouchableOpacity>
           ),
         })}
       />
-      <Stack.Screen 
-        name="AlarmSettingsScreen" 
-        component={AlarmSettingsScreen} 
-        options={{ title: '알림 설정' }}  // 알림 설정 스크린 추가
-      />
+      <Stack.Screen name="AlarmSettingsScreen" component={AlarmSettingsScreen} />  {/* AlarmSettingsScreen 추가 */}
     </Stack.Navigator>
   );
 }

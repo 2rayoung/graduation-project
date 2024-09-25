@@ -1,46 +1,72 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Linking, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Linking, ScrollView, Alert } from 'react-native';
 
-export default function RecipeDetailScreen({ route, navigation }) {
-  const { recipe } = route.params;
+export default function RecipeDetailScreen({ route }) {
+  const { recipeDetails, recipeTitle } = route.params;  // 전달된 레시피 세부 정보와 제목
+  const [ingredients, instructions] = recipeDetails.split('\n\n');  // \n\n로 구분된 재료와 레시피 분리
+  const [customRecipe, setCustomRecipe] = useState(null);  // "내 재료로 만들기"로 받은 커스텀 레시피
 
-  const handleMaterialManagementPress = () => {
-    navigation.navigate('MaterialManagement');
+  // 유튜브 레시피 영상 검색
+  const handleSearchVideos = () => {
+    const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(recipeTitle)}`;
+    Linking.openURL(youtubeSearchUrl); 
   };
 
-  const handleVideoPress = () => {
-    Linking.openURL('https://youtu.be/spjIN3vPVVY?si=uYDG8VWb0xRYRavA'); // 여기에 실제 비디오 URL을 추가하세요.
+  // "내 재료로 만들기" 버튼 클릭 시, 백엔드에서 커스텀 레시피를 받아오는 함수
+  const handleCustomRecipe = async () => {
+    try {
+      const response = await fetch('http://172.17.186.37:8080/api/custom-recipe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ingredients: ['carrot', 'onion'] }),  // 예시로 재료 리스트
+      });
+
+      const result = await response.json();
+      setCustomRecipe(result.customRecipe);  // 백엔드에서 받은 커스텀 레시피 저장
+    } catch (error) {
+      console.error('레시피 가져오기 오류:', error);
+      Alert.alert('오류', '내 재료로 레시피를 가져오는 중 오류가 발생했습니다.');
+    }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>{recipeTitle}</Text>
       <Text style={styles.title}>레시피 추천</Text>
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>재료:</Text>
         <Text style={styles.recipeText}>
-          닭고기 30g (닭 정강이 또는 목){"\n"}
-          양파 1/2개{"\n"}
-          마늘 1/2쪽{"\n"}
-          간장 1 큰술{"\n"}
-          설탕 1 큰술{"\n"}
-          참기름 1 작은술{"\n"}
-          후추{"\n"}
-          소금{"\n"}
-          물 1컵{"\n"}
-          통깨
+          {ingredients}  {/* 백엔드에서 가져온 재료 출력 */}
         </Text>
       </View>
+
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>레시피:</Text>
         <Text style={styles.recipeText}>
-          1. 닭고기를 3cm 길이로 자르고, 양파와 마늘은 굵게 썰고, 대파는 4cm 길이로 자른다.{"\n"}
-          2. 냄비에 양파, 마늘을 넣고 닭고기와 간장, 설탕, 참기름, 후추를 넣고 섞어준다.{"\n"}
-          3. 물을 붓고 중불에서 끓인다.{"\n"}
-          4. 국물이 반 정도 졸아들면 불을 끄고 통깨를 뿌린다.
+          {instructions}  {/* 백엔드에서 가져온 레시피 출력 */}
         </Text>
       </View>
-      <TouchableOpacity style={[styles.button, styles.videoButton]} onPress={handleVideoPress}>
-        <Text style={styles.buttonText}>영상 보기</Text>
+
+      {/* 커스텀 레시피가 있을 경우 출력 */}
+      {customRecipe && (
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>내 재료로 만든 레시피:</Text>
+          <Text style={styles.recipeText}>
+            {customRecipe}  {/* 커스텀 레시피 출력 */}
+          </Text>
+        </View>
+      )}
+
+      {/* 내 재료로 만들기 버튼 */}
+      <TouchableOpacity style={styles.button} onPress={handleCustomRecipe}>
+        <Text style={styles.buttonText}>내 재료로 만들기</Text>
+      </TouchableOpacity>
+
+      {/* 제육볶음 레시피 영상 보기 버튼 */}
+      <TouchableOpacity style={[styles.button, styles.videoButton]} onPress={handleSearchVideos}>
+        <Text style={styles.buttonText}>레시피 영상 보기</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -83,13 +109,13 @@ const styles = StyleSheet.create({
   button: {
     padding: 15,
     borderRadius: 8,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#667080',
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 8,
   },
   videoButton: {
-    backgroundColor: '#667080', // Tomato color for video button
+    backgroundColor: '#667080',  // 다른 색상을 사용하여 구분
   },
   buttonText: {
     color: '#fff',

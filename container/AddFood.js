@@ -1,177 +1,270 @@
-import * as ImagePicker from 'expo-image-picker';
-import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import * as Device from 'expo-device';
 
 export default function AddFoodScreen({ route, navigation }) {
   const { mode } = route.params || {};
-  const [foodName, setFoodName] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [storageType, setStorageType] = useState('room');
-  const [price, setPrice] = useState(''); // 가격 상태 추가
+  const [foodItems, setFoodItems] = useState([{ foodName: '', quantity: '', expiryDate: '', storageType: '' }]); // 시작할 때는 하나만
 
-  useEffect(() => {
-    if (mode === 'takePhoto') {
-      handleTakePhoto();
-    } else if (mode === 'chooseFromGallery') {
-      handleChooseFromGallery();
-    }
-  }, [mode]);
-
-  const handleTakePhoto = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission to access camera was denied');
-      return;
-    }
-    const result = await ImagePicker.launchCameraAsync();
-    if (!result.cancelled) {
-      console.log('Photo URI:', result.uri);
-    }
-    navigation.setParams({ mode: null }); // Reset mode
+  const handleInputChange = (index, field, value) => {
+    const updatedItems = [...foodItems];
+    updatedItems[index][field] = value;
+    setFoodItems(updatedItems);
   };
 
-  const handleChooseFromGallery = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission to access media library was denied');
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync();
-    if (!result.cancelled) {
-      console.log('Gallery URI:', result.uri);
-    }
-    navigation.setParams({ mode: null }); // Reset mode
+  const addNewFoodItem = () => {
+    setFoodItems([...foodItems, { foodName: '', quantity: '', expiryDate: '', storageType: '' }]);
   };
 
-  const handleManualInput = () => {
-    const data = {
-      foodName,
-      quantity,
-      expiryDate,
-      storageType,
-      price,
-    };
-    console.log('Manual Input Data:', data);
-    Alert.alert('식품 추가 완료', '직접 입력이 완료되었습니다.');
-    navigation.navigate('FoodList'); // Return to FoodList
+  const handleManualInput = async () => {
+    const data = foodItems.map((item) => ({
+      deviceId: Device.modelId || Device.osInternalBuildId || '',
+      foodName: item.foodName || '',
+      price: 0,
+      quantity: parseFloat(item.quantity) || 0,
+      expirationDate: item.expiryDate || '',
+      registeredDate: new Date().toISOString(),
+      storageMethod: item.storageType.toUpperCase(),
+    }));
+
+    try {
+      const response = await fetch('http://172.17.186.37:8080/api/fooditems/list', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        Alert.alert('식품 추가 완료', '식품이 성공적으로 추가되었습니다.');
+        navigation.navigate('FoodList', { newFood: data });
+      } else {
+        const errorMessage = await response.text();
+        console.error(`서버 응답 오류: ${response.status}, 메시지: ${errorMessage}`);
+        Alert.alert('오류', `식품 추가 중 문제가 발생했습니다. 상태 코드: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('API 요청 오류:', error);
+      Alert.alert('오류', '서버에 연결할 수 없습니다.');
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>식품 이름</Text>
-      <TextInput
-        style={styles.input}
-        value={foodName}
-        onChangeText={setFoodName}
-        placeholder="식품 이름을 입력하세요."
-      />
-      <Text style={styles.label}>수량</Text>
-      <TextInput
-        style={styles.input}
-        value={quantity}
-        onChangeText={setQuantity}
-        placeholder="수량을 입력하세요."
-        keyboardType="numeric"
-      />
-      <Text style={styles.label}>유통기한</Text>
-      <TextInput
-        style={styles.input}
-        value={expiryDate}
-        onChangeText={setExpiryDate}
-        placeholder="유통기한을 입력하세요. (YYYY-MM-DD)"
-      />
-      <Text style={styles.label}>가격</Text>
-      <TextInput
-        style={styles.input}
-        value={price}
-        onChangeText={setPrice}
-        placeholder="가격을 입력하세요."
-      />
-      <Text style={styles.label}>보관 유형</Text>
-      <View style={styles.pickerContainer}>
-        <TouchableOpacity
-          style={[styles.pickerButton, storageType === 'room' && styles.pickerButtonSelected]}
-          onPress={() => setStorageType('room')}
-        >
-          <Text style={[styles.pickerButtonText, storageType === 'room' && styles.pickerButtonTextSelected]}>
-            실온
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.pickerButton, storageType === 'fridge' && styles.pickerButtonSelected]}
-          onPress={() => setStorageType('fridge')}
-        >
-          <Text style={[styles.pickerButtonText, storageType === 'fridge' && styles.pickerButtonTextSelected]}>
-            냉장
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.pickerButton, storageType === 'freezer' && styles.pickerButtonSelected]}
-          onPress={() => setStorageType('freezer')}
-        >
-          <Text style={[styles.pickerButtonText, storageType === 'freezer' && styles.pickerButtonTextSelected]}>
-            냉동
-          </Text>
+    <View style={styles.mainContainer}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          {foodItems.map((item, index) => (
+            <View key={index} style={styles.foodItemContainer}>
+              <View style={styles.row}>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>식품 이름</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={item.foodName}
+                    onChangeText={(value) => handleInputChange(index, 'foodName', value)}
+                    placeholder="식품 이름"
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>수량</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={item.quantity}
+                    onChangeText={(value) => handleInputChange(index, 'quantity', value)}
+                    placeholder="수량"
+                    keyboardType="numeric"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.row}>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>유통기한</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={item.expiryDate}
+                    onChangeText={(value) => handleInputChange(index, 'expiryDate', value)}
+                    placeholder="유통기한 (YYYY-MM-DD)"
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>등록일자</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={new Date().toISOString().slice(0, 10)}
+                    editable={false} // 등록일자는 현재 날짜로 고정
+                  />
+                </View>
+              </View>
+
+              <View style={styles.storageRow}>
+                <TouchableOpacity
+                  style={[
+                    styles.storageButton,
+                    item.storageType === 'REFRIGERATOR' && styles.storageButtonSelected,
+                  ]}
+                  onPress={() => handleInputChange(index, 'storageType', 'REFRIGERATOR')}
+                >
+                  <Text
+                    style={[
+                      styles.storageButtonText,
+                      item.storageType === 'REFRIGERATOR' && styles.storageButtonTextSelected,
+                    ]}
+                  >
+                    냉장
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.storageButton,
+                    item.storageType === 'FREEZER' && styles.storageButtonSelected,
+                  ]}
+                  onPress={() => handleInputChange(index, 'storageType', 'FREEZER')}
+                >
+                  <Text
+                    style={[
+                      styles.storageButtonText,
+                      item.storageType === 'FREEZER' && styles.storageButtonTextSelected,
+                    ]}
+                  >
+                    냉동
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.storageButton,
+                    item.storageType === 'ROOM_TEMPERATURE' && styles.storageButtonSelected,
+                  ]}
+                  onPress={() => handleInputChange(index, 'storageType', 'ROOM_TEMPERATURE')}
+                >
+                  <Text
+                    style={[
+                      styles.storageButtonText,
+                      item.storageType === 'ROOM_TEMPERATURE' && styles.storageButtonTextSelected,
+                    ]}
+                  >
+                    실온
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
+
+          {/* + 버튼 추가 */}
+          <TouchableOpacity style={styles.addNewButton} onPress={addNewFoodItem}>
+            <Text style={styles.addNewButtonText}>+ 식품 추가</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+
+      {/* 추가하기 버튼을 화면 하단에 고정 */}
+      <View style={styles.fixedButtonContainer}>
+        <TouchableOpacity style={styles.addButton} onPress={handleManualInput}>
+          <Text style={styles.addButtonText}>추가하기</Text>
         </TouchableOpacity>
       </View>
-      
-      {/* 추가하기 버튼 */}
-      <TouchableOpacity style={styles.addButton} onPress={handleManualInput}>
-        <Text style={styles.addButtonText}>추가하기</Text>
-      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: 100,  // 추가된 여백을 통해 버튼에 가려지지 않게 함
+  },
+  container: {
     padding: 16,
+    backgroundColor: '#f8f8f8',
+  },
+  foodItemContainer: {
     backgroundColor: '#fff',
-  },
-  label: {
-    fontSize: 18,
-    marginBottom: 8,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingLeft: 8,
+    padding: 16,
     marginBottom: 16,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
   },
-  pickerContainer: {
+  row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 16,
   },
-  pickerButton: {
+  inputContainer: {
     flex: 1,
-    alignItems: 'center',
-    padding: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
+    marginRight: 8,
   },
-  pickerButtonSelected: {
+  label: {
+    fontSize: 14,
+    marginBottom: 4,
+    color: '#333',
+  },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingLeft: 10,
+  },
+  storageRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  storageButton: {
+    flex: 1,
+    padding: 10,
+    marginHorizontal: 5,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: '#ccc',
+    alignItems: 'center',
+  },
+  storageButtonSelected: {
     backgroundColor: '#667080',
   },
-  pickerButtonText: {
-    color: 'gray',
+  storageButtonText: {
+    color: '#333',
   },
-  pickerButtonTextSelected: {
+  storageButtonTextSelected: {
     color: '#fff',
   },
+  fixedButtonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#f8f8f8',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+  },
   addButton: {
-    backgroundColor: '#667080', // 버튼의 배경색
+    backgroundColor: '#667080',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 16,
   },
   addButtonText: {
-    color: '#fff', // 버튼 텍스트 색상
+    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  addNewButton: {
+    marginTop: 16,
+    backgroundColor: '#667080',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  addNewButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });

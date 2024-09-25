@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HeaderRightIcon({ onSortByRegistration, onSortByExpiry }) {
   const [modalVisible, setModalVisible] = useState(false);
+  const navigation = useNavigation(); // 네비게이션 훅
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
@@ -18,9 +20,8 @@ export default function HeaderRightIcon({ onSortByRegistration, onSortByExpiry }
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}>
+        onRequestClose={toggleModal}
+      >
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <View style={{ width: 300, backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
             <Text style={{ fontSize: 18, fontWeight: 'bold' }}>메뉴</Text>

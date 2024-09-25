@@ -27,8 +27,8 @@ export default function StoreMethod({ route }) {
 
   const fetchStoreMethod = async (name) => {
     try {
-      const response = await fetch(`http://172.17.186.119:8080/api/recipes/storage?name=${encodeURIComponent(name)}`, {
-        method: 'POST', // 또는 'POST'로 변경할 수 있음
+      const response = await fetch(`http://172.17.186.37:8080/api/recipes/storage?name=${encodeURIComponent(name)}`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },

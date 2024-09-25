@@ -11,9 +11,10 @@ export default function FoodList({ navigation }) {
     { id: '4', name: '청양고추', storage: 'fridge', expiry: '2024-09-03', image: require('../assets/chilli.png') },
   ]);
 
+  const [checkedFoods, setCheckedFoods] = useState([]);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
-  const [modalVisible, setModalVisible] = useState(false);  // 모달 가시성 상태 추가
+  const [modalVisible, setModalVisible] = useState(false);
 
   // 필터와 검색어에 따라 음식 목록 필터링
   const filteredFoods = foods.filter(food => 
@@ -27,7 +28,6 @@ export default function FoodList({ navigation }) {
   };
 
   const sortByRegistration = () => {
-    // 예시로, id 순으로 정렬하는 것을 가정합니다.
     const sorted = [...foods].sort((a, b) => a.id.localeCompare(b.id));
     setFoods(sorted);
   };
@@ -50,6 +50,24 @@ export default function FoodList({ navigation }) {
       ),
     });
   }, [navigation]);
+
+  const toggleCheckbox = (foodId) => {
+    if (checkedFoods.includes(foodId)) {
+      setCheckedFoods(checkedFoods.filter(id => id !== foodId));
+    } else {
+      setCheckedFoods([...checkedFoods, foodId]);
+    }
+  };
+
+  const handleConfirm = () => {
+    const selectedFoods = foods.filter(food => checkedFoods.includes(food.id));
+
+    // 네비게이션 경로 수정
+    navigation.navigate('FoodListStack', {
+      screen: 'SelectedIngredients',
+      params: { selectedFoods },
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -90,15 +108,30 @@ export default function FoodList({ navigation }) {
       <FlatList
         data={filteredFoods}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => navigation.navigate('FoodDetail', { foodId: item.id })}>
-            <View style={styles.foodItem}>
+          <View style={styles.foodItem}>
+            {/* 체크박스 */}
+            <TouchableOpacity onPress={() => toggleCheckbox(item.id)}>
+              <View style={styles.checkbox}>
+                {checkedFoods.includes(item.id) ? (
+                  <Text style={styles.checked}>✔️</Text>
+                ) : (
+                  <Text style={styles.unchecked}>⬜</Text>
+                )}
+              </View>
+            </TouchableOpacity>
+            
+            {/* 식품 정보 */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('FoodDetail', { foodId: item.id })}
+              style={styles.foodInfoContainer}
+            >
               <Image source={item.image} style={styles.foodImage} />
               <View style={styles.foodInfo}>
                 <Text style={styles.foodName}>{item.name}</Text>
                 <Text style={styles.foodExpiry}>유통기한: {item.expiry}</Text>
               </View>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
         )}
         keyExtractor={(item) => item.id}
         style={styles.foodList}
@@ -108,6 +141,13 @@ export default function FoodList({ navigation }) {
       <TouchableOpacity onPress={openModal} style={styles.addButton}>
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
+
+      {/* 확인 버튼 */}
+      {checkedFoods.length > 0 && (
+        <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
+          <Text style={styles.confirmButtonText}>확인</Text>
+        </TouchableOpacity>
+      )}
 
       {/* Modal Component */}
       <ReceiptInput visible={modalVisible} onClose={closeModal} navigation={navigation} />
@@ -190,6 +230,26 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
   },
+  checkbox: {
+    width: 24,
+    height: 24,
+    marginRight: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checked: {
+    fontSize: 18,
+    color: '#667080',
+  },
+  unchecked: {
+    fontSize: 18,
+    color: '#ccc',
+  },
+  foodInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
   foodImage: {
     width: 54,
     height: 56,
@@ -220,6 +280,22 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: '#fff',
     fontSize: 24,
+    fontWeight: 'bold',
+  },
+  confirmButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: '#667080',
+    padding: 15,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  confirmButtonText: {
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });

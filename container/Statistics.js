@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Modal } from 'react-native';
 import { PieChart } from 'react-native-svg-charts';
 import { G, Line, Circle, Text as SVGText } from 'react-native-svg';
 import { useIsFocused } from '@react-navigation/native';
 
-export default function StatisticsScreen({ route }) {
+export default function StatisticsScreen({ navigation }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [consumptionData, setConsumptionData] = useState([]);
   const [disposalData, setDisposalData] = useState([]);
   const [costData, setCostData] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false); // 모달 상태 추가
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -16,6 +17,27 @@ export default function StatisticsScreen({ route }) {
       fetchData();
     }
   }, [isFocused]);
+
+  useEffect(() => {
+    // 헤더에 설정 아이콘 추가
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={toggleModal}>
+          <Image
+            source={require('../assets/settings-icon.png')}
+            style={{ width: 28, height: 28 }}
+          />
+        </TouchableOpacity>
+      ),
+      headerRightContainerStyle: {
+        paddingRight: 20, // 오른쪽 여백 추가
+      },
+    });
+  }, [navigation]);
+
+  const toggleModal = () => {
+    setModalVisible(!modalVisible); // 모달을 여닫는 함수
+  };
 
   const fetchData = () => {
     const consumption = [
@@ -84,7 +106,6 @@ export default function StatisticsScreen({ route }) {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>통계</Text>
       
-      {/* 커스텀 버튼 컨테이너 */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity 
           style={[styles.filterButton, selectedIndex === 0 && styles.selected]}
@@ -124,6 +145,32 @@ export default function StatisticsScreen({ route }) {
           </View>
         ))}
       </View>
+
+      {/* 설정 모달 */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={toggleModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>설정</Text>
+            {/* "유통기한" 클릭 시 AlarmSettingsScreen으로 이동 */}
+            <TouchableOpacity onPress={() => {
+              toggleModal(); // 모달 닫기
+              setTimeout(() => {
+                navigation.navigate('AlarmSettingsScreen'); // 화면 이동
+              }, 300); // 모달 애니메이션 완료 후 화면 이동
+            }}>
+              <Text style={{ marginVertical: 10 }}>알림설정</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleModal}>
+              <Text style={styles.closeButton}>닫기</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -177,5 +224,27 @@ const styles = StyleSheet.create({
   legendLabel: {
     fontSize: 16,
     color: '#555',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    width: 300,
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  closeButton: {
+    color: 'red',
+    marginTop: 20,
   },
 });

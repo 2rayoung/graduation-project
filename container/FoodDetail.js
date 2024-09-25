@@ -7,9 +7,9 @@ export default function FoodDetail({ route, navigation }) {
   const [consumptionValue, setConsumptionValue] = React.useState(0);
 
   const foods = [
-    { id: '1', name: '양파', expiry: '2024-08-15', image: require('../assets/onion.png') },
-    { id: '2', name: '당근', expiry: '2024-08-12', image: require('../assets/carrot1.png') },
-    { id: '3', name: '파프리카', expiry: '2024-07-29', image: require('../assets/pepper.png') },
+    { id: '1', foodname: '양파', expiry: '2024-08-15',quantity : '5', image: require('../assets/onion.png') },
+    { id: '2', foodname: '당근', expiry: '2024-08-12',quantity : '2', image: require('../assets/carrot1.png') },
+    { id: '3', foodname: '파프리카', expiry: '2024-07-29',quantity : '3', image: require('../assets/pepper.png') }
   ];
 
   const food = foods.find(f => f.id === foodId);
@@ -22,17 +22,21 @@ export default function FoodDetail({ route, navigation }) {
     );
   }
 
+  // 가짜 API 테스트용 함수
+  const fakeApiTest = (url, data) => {
+    return new Promise((resolve) => {
+      console.log(`Fake API 호출됨: ${url}, 데이터:`, data);
+      setTimeout(() => {
+        resolve({ status: 200, message: 'Success' });
+      }, 1000); // 1초 후에 응답
+    });
+  };
+
   const handleConsume = async () => {
     try {
-      const response = await fetch('https://your-backend-url/api/foods/consume', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ foodId: food.id }),
-      });
-      if (response.ok) {
-        Alert.alert('소비 완료', `${food.name}를(을) 소비했습니다.`);
+      const response = await fakeApiTest('https://fake-api.com/consume', { foodId: food.id });
+      if (response.status === 200) {
+        Alert.alert('소비 완료', `${food.foodname}를(을) 소비했습니다.`);
         navigation.navigate('FoodList');
       } else {
         Alert.alert('오류', '소비 처리 중 오류가 발생했습니다.');
@@ -44,15 +48,9 @@ export default function FoodDetail({ route, navigation }) {
 
   const handleDispose = async () => {
     try {
-      const response = await fetch('https://your-backend-url/api/foods/dispose', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ foodId: food.id }),
-      });
-      if (response.ok) {
-        Alert.alert('음식물 배출', `${food.name}를(을) 배출했습니다.`);
+      const response = await fakeApiTest('https://fake-api.com/dispose', { foodId: food.id });
+      if (response.status === 200) {
+        Alert.alert('음식물 배출', `${food.foodname}를(을) 배출했습니다.`);
         navigation.navigate('FoodList');
       } else {
         Alert.alert('오류', '배출 처리 중 오류가 발생했습니다.');
@@ -78,8 +76,9 @@ export default function FoodDetail({ route, navigation }) {
       <View style={styles.foodInfoContainer}>
         <Image source={food.image} style={styles.foodImage} />
         <View style={styles.foodInfo}>
-          <Text style={styles.foodName}>{food.name}</Text>
+          <Text style={styles.foodName}>{food.foodname}</Text>
           <Text style={styles.foodExpiry}>유통기한: {food.expiry}</Text>
+          <Text style={styles.foodExpiry}>갯수: {food.quantity}</Text>
         </View>
       </View>
       <View style={styles.section}>
@@ -88,7 +87,7 @@ export default function FoodDetail({ route, navigation }) {
           value={consumptionValue}
           onValueChange={setConsumptionValue}
           minimumValue={0}
-          maximumValue={100}
+          maximumValue={parseInt(food.quantity, 10)}
           step={1}
           style={styles.slider}
         />
