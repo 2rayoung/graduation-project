@@ -44,8 +44,8 @@ const ExpirationAlertScreen = () => {
       <View style={styles.settingRow}>
         <Text style={styles.settingText}>푸시 알림</Text>
         <Switch
-          trackColor={{ false: '#767577', true: '#81b0ff' }}
-          thumbColor={isAlertEnabled ? '#0000ff' : '#f4f3f4'}
+          trackColor={{ false: '#767577', true: '#969696' }}
+          thumbColor={isAlertEnabled ? '#667080' : '#f4f3f4'}
           onValueChange={toggleAlertSwitch}
           value={isAlertEnabled}
         />

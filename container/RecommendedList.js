@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import API_BASE_URL from './config';  // config에서 API_BASE_URL 가져옴
 
-// 백엔드 API URL 설정
-const BACKEND_API_URL = 'http://172.17.186.37:8080/api/recipes/top';  // 인기 레시피 목록
-const RECIPE_DETAILS_API_URL = 'http://172.17.186.37:8080/api/recipes/details';  // 레시피 세부 정보
+const BACKEND_API_URL = `${API_BASE_URL}/api/recipes/top`;  // 인기 레시피 목록
+const RECIPE_DETAILS_API_URL = `${API_BASE_URL}/api/recipes/details`;  // 레시피 세부 정보
 
 export default function RecommendedListScreen({ route, navigation }) {
   const { type = '인기 레시피' } = route.params || {};  // 기본값 설정
@@ -29,13 +29,12 @@ export default function RecommendedListScreen({ route, navigation }) {
   }, [type]);
 
   const handlePress = async (recipe) => {
-    // 레시피 링크를 사용해 백엔드에서 재료 및 레시피 정보 가져오기
     try {
       const response = await fetch(`${RECIPE_DETAILS_API_URL}?link=${encodeURIComponent(recipe.link)}`);
       const details = await response.text();  // 백엔드에서 받은 문자열 데이터를 텍스트로 변환
 
-      // RecipeDetailScreen으로 이동하고 레시피 정보 전달
-      navigation.navigate('RecipeDetail', { recipeDetails: details });
+      // RecipeDetailScreen으로 이동하고 레시피 정보와 메뉴 이름(title)을 전달
+      navigation.navigate('RecipeDetail', { recipeDetails: details, recipeTitle: recipe.title });
     } catch (error) {
       console.error('Error fetching recipe details:', error);
     }

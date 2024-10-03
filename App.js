@@ -8,7 +8,6 @@ import AddFoodScreen from './container/AddFood';
 import FoodDetailScreen from './container/FoodDetail';
 import FoodListScreen from './container/FoodList';
 import HeaderRightIcon from './container/HeaderRightIcon'; 
-import MaterialManagementScreen from './container/MaterialManagement';
 import PrepMethodScreen from './container/PrepMethod';
 import ReceiptInputScreen from './container/ReceiptInput';
 import RecipeDetailScreen from './container/RecipeDetailScreen';
@@ -44,7 +43,7 @@ function FoodListStack() {
       <Stack.Screen name="PrepMethod" component={PrepMethodScreen} />
       <Stack.Screen name="StoreMethod" component={StoreMethodScreen} />
       <Stack.Screen name="ReceiptInput" component={ReceiptInputScreen} />
-      <Stack.Screen name="MaterialManagement" component={MaterialManagementScreen} />
+
       <Stack.Screen 
         name="RecipeDetail" 
         component={RecipeDetailScreen}
@@ -72,7 +71,6 @@ function RecipeRecommendationStack() {
     >
       <Stack.Screen name="RecipeRecommendation" component={RecipeRecommendationScreen} />
       <Stack.Screen name="RecommendedList" component={RecommendedListScreen} />
-      <Stack.Screen name="MaterialManagement" component={MaterialManagementScreen} />
       <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
     </Stack.Navigator>
   );
@@ -154,7 +152,6 @@ function MainTabs() {
     </Tab.Navigator>
   );
 }
-
 export default function App() {
   return (
     <NavigationContainer>

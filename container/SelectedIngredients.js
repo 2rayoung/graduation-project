@@ -65,20 +65,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5', // 밝은 배경색
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
+    color: '#333',
   },
   foodItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 8,
+    backgroundColor: '#fafafa', // 더 밝은 배경색으로 변경
+    borderRadius: 12, // 더 부드러운 곡선
     marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3, // 그림자 효과 추가
   },
   foodImage: {
     width: 50,
@@ -91,6 +97,7 @@ const styles = StyleSheet.create({
   foodName: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#333',
   },
   foodExpiry: {
     fontSize: 12,
@@ -98,7 +105,7 @@ const styles = StyleSheet.create({
   },
   recipeButton: {
     marginTop: 'auto',
-    backgroundColor: '#667080',
+    backgroundColor: '#667080', // 버튼의 어두운 배경
     padding: 15,
     borderRadius: 10,
     justifyContent: 'center',
@@ -121,3 +128,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
