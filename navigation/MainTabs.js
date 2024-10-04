@@ -9,30 +9,34 @@ import StatisticsScreen from '../container/Statistics';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+// 스택 내비게이터로 FoodList 화면 관리
 function FoodListStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="FoodList" component={FoodListScreen} />
+      <Stack.Screen name="FoodList" component={FoodListScreen} /> {/* 유효한 JSX 반환하는 컴포넌트 */}
     </Stack.Navigator>
   );
 }
 
+// 스택 내비게이터로 RecipeRecommendation 화면 관리
 function RecipeRecommendationStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="RecipeRecommendation" component={RecipeRecommendationScreen} />
+      <Stack.Screen name="RecipeRecommendation" component={RecipeRecommendationScreen} /> {/* 유효한 JSX 반환하는 컴포넌트 */}
     </Stack.Navigator>
   );
 }
 
+// 스택 내비게이터로 Statistics 화면 관리
 function StatisticsStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Statistics" component={StatisticsScreen} />
+      <Stack.Screen name="Statistics" component={StatisticsScreen} /> {/* 유효한 JSX 반환하는 컴포넌트 */}
     </Stack.Navigator>
   );
 }
 
+// 하단 탭 내비게이터 설정
 export default function MainTabs() {
   return (
     <Tab.Navigator>
@@ -40,7 +44,7 @@ export default function MainTabs() {
         name="FoodList" 
         component={FoodListStack} 
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ size }) => (
             <Image source={require('../assets/menu4.png')} style={{ width: size, height: size }} />
           ),
         }} 
@@ -49,7 +53,7 @@ export default function MainTabs() {
         name="RecipeRecommendation" 
         component={RecipeRecommendationStack} 
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ size }) => (
             <Image source={require('../assets/food.png')} style={{ width: size, height: size }} />
           ),
         }} 
@@ -58,7 +62,7 @@ export default function MainTabs() {
         name="Statistics" 
         component={StatisticsStack} 
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ size }) => (
             <Image source={require('../assets/pie-chart.png')} style={{ width: size, height: size }} />
           ),
         }} 

@@ -16,21 +16,17 @@ import RecommendedListScreen from './container/RecommendedList';
 import StatisticsScreen from './container/Statistics';
 import StoreMethodScreen from './container/StoreMethod';
 import SplashScreenComponent from './screens/SplashScreen';
-import AlarmSettingsScreen from './container/AlarmSettingsScreen'; // 알림 설정 화면 추가
-import SelectedIngredientsScreen from './container/SelectedIngredients'; // 선택된 재료 화면 추가
+import AlarmSettingsScreen from './container/AlarmSettingsScreen'; 
+import SelectedIngredientsScreen from './container/SelectedIngredients'; 
+import RecipeSearchResultScreen from './container/RecipeSearchResultScreen'; // 추가된 검색 결과 화면
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+// Food List Stack Navigator
 function FoodListStack() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: '#F5F5F5' }, 
-        headerTintColor: '#000000', 
-        headerTitleStyle: { fontWeight: 'bold' }, 
-      }}
-    >
+    <Stack.Navigator>
       <Stack.Screen 
         name="FoodList" 
         component={FoodListScreen}
@@ -43,7 +39,6 @@ function FoodListStack() {
       <Stack.Screen name="PrepMethod" component={PrepMethodScreen} />
       <Stack.Screen name="StoreMethod" component={StoreMethodScreen} />
       <Stack.Screen name="ReceiptInput" component={ReceiptInputScreen} />
-
       <Stack.Screen 
         name="RecipeDetail" 
         component={RecipeDetailScreen}
@@ -54,37 +49,28 @@ function FoodListStack() {
       <Stack.Screen 
         name="SelectedIngredients" 
         component={SelectedIngredientsScreen} 
-        options={{ title: '선택된 재료' }}  // 선택된 재료 화면 추가
+        options={{ title: '선택된 재료' }}
       />
     </Stack.Navigator>
   );
 }
 
+// Recipe Recommendation Stack Navigator
 function RecipeRecommendationStack() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: '#F5F5F5' }, 
-        headerTintColor: '#000000', 
-        headerTitleStyle: { fontWeight: 'bold' }, 
-      }}
-    >
+    <Stack.Navigator>
       <Stack.Screen name="RecipeRecommendation" component={RecipeRecommendationScreen} />
       <Stack.Screen name="RecommendedList" component={RecommendedListScreen} />
       <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
+      <Stack.Screen name="SearchResults" component={RecipeSearchResultScreen} />
     </Stack.Navigator>
   );
 }
 
+// Statistics Stack Navigator
 function StatisticsStack() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: '#F5F5F5' }, 
-        headerTintColor: '#000000', 
-        headerTitleStyle: { fontWeight: 'bold' }, 
-      }}
-    >
+    <Stack.Navigator>
       <Stack.Screen 
         name="Statistics" 
         component={StatisticsScreen}
@@ -102,20 +88,16 @@ function StatisticsStack() {
       <Stack.Screen 
         name="AlarmSettingsScreen" 
         component={AlarmSettingsScreen} 
-        options={{ title: '알림 설정' }}  // 알림 설정 스크린 추가
+        options={{ title: '알림 설정' }} 
       />
     </Stack.Navigator>
   );
 }
 
+// Bottom Tab Navigator for main tabs
 function MainTabs() {
   return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarActiveTintColor: '#000000',   
-        tabBarInactiveTintColor: 'lightgray', 
-      }}
-    >
+    <Tab.Navigator>
       <Tab.Screen 
         name="FoodListStack" 
         component={FoodListStack} 
@@ -152,6 +134,7 @@ function MainTabs() {
     </Tab.Navigator>
   );
 }
+
 export default function App() {
   return (
     <NavigationContainer>

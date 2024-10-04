@@ -8,6 +8,12 @@ export default function RecipeRecommendationScreen({ navigation }) {
     navigation.navigate('RecommendedList', { type });
   };
 
+  const handleSearch = () => {
+    if (search.trim()) {
+      navigation.navigate('SearchResults', { searchQuery: search }); // 검색 결과 창으로 이동
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Header with Title */}
@@ -26,6 +32,9 @@ export default function RecipeRecommendationScreen({ navigation }) {
           value={search} // 검색어 상태 바인딩
           onChangeText={setSearch} // 검색어 업데이트 함수
         />
+        <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+          <Text style={styles.searchButtonText}>검색</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Buttons */}
@@ -85,6 +94,16 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     paddingVertical: 5,
+  },
+  searchButton: {
+    backgroundColor: '#667080',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  searchButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   card: {
     flexDirection: 'row',

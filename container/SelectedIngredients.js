@@ -1,3 +1,4 @@
+//재료 선택시 레시피 추천 화면
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 

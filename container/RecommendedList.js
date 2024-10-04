@@ -1,3 +1,4 @@
+//인기 레시피 클릭시 메뉴 추천 화면
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import API_BASE_URL from './config';  // config에서 API_BASE_URL 가져옴
