@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert } from 'react-native';
+import API_BASE_URL from './config'; // API_BASE_URL 가져오기
 
 export default function PrepMethod({ route }) {
   const { foodId } = route.params;
@@ -27,7 +28,7 @@ export default function PrepMethod({ route }) {
 
   const fetchPrepMethod = async (name) => {
     try {
-      const response = await fetch(`http://172.17.186.119:8080/api/recipes/handling?name=${encodeURIComponent(name)}`, {
+      const response = await fetch(`${API_BASE_URL}/api/recipes/handling?name=${encodeURIComponent(name)}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
