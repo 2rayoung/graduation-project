@@ -1,3 +1,4 @@
+//보관방법 
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert } from 'react-native';
 import API_BASE_URL from './config';  // config.js에서 API_BASE_URL 가져옴

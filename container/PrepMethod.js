@@ -7,6 +7,7 @@ export default function PrepMethod({ route }) {
 
   const [prepMethod, setPrepMethod] = useState('');
   const [loading, setLoading] = useState(true);
+  const [hasFetched, setHasFetched] = useState(false); // API 호출이 완료되었는지 여부를 저장
 
   // 예제 데이터
   const foods = [
@@ -18,15 +19,18 @@ export default function PrepMethod({ route }) {
   const food = foods.find(f => f.id === foodId);
 
   useEffect(() => {
-    if (food) {
-      fetchPrepMethod(food.name);
-    } else {
+    if (food && !hasFetched) {
+      fetchPrepMethod(food.name);  // 손질 방법 가져오기
+    } else if (!food) {
       Alert.alert('오류', '해당 식품을 찾을 수 없습니다.');
       setLoading(false);
     }
-  }, [food]);
+    // hasFetched가 변경되지 않도록 의존성 배열에 추가하지 않음
+  }, [food]);  // food가 변경될 때만 호출
 
   const fetchPrepMethod = async (name) => {
+    if (hasFetched) return; // 이미 호출되었다면 중복 요청 방지
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/recipes/handling?name=${encodeURIComponent(name)}`, {
         method: 'POST',
@@ -34,10 +38,11 @@ export default function PrepMethod({ route }) {
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.ok) {
-        const result = await response.text(); // 서버로부터 손질 방법 텍스트를 받아옴
+        const result = await response.text();
         setPrepMethod(result);
+        setHasFetched(true); // API 호출 완료 상태로 설정
       } else {
         Alert.alert('오류', '손질 방법을 가져오는 중 문제가 발생했습니다.');
       }
@@ -48,7 +53,6 @@ export default function PrepMethod({ route }) {
       setLoading(false);
     }
   };
-  
 
   if (loading) {
     return (

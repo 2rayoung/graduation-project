@@ -12,8 +12,8 @@ export default function HeaderRightIcon({ onSortByRegistration, onSortByExpiry }
 
   return (
     <>
-      <TouchableOpacity onPress={toggleModal} style={{ paddingRight: 20, paddingTop: 0 }}>
-        <Image source={require('../assets/options.png')} style={{ width: 28, height: 26 }} />
+      <TouchableOpacity onPress={toggleModal} style={{ paddingRight: 10, paddingTop: 5 }}>
+        <Image source={require('../assets/arrow.png')} style={{ width: 28, height: 28 }} />
       </TouchableOpacity>
 
       <Modal

@@ -34,7 +34,7 @@ export default function ReceiptInput({ visible, onClose, navigation }) {
 
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: false,
-      quality: 1,
+      quality: 0.1,
     });
 
     if (!result.canceled) {
@@ -54,7 +54,7 @@ export default function ReceiptInput({ visible, onClose, navigation }) {
 
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: false,
-      quality: 1,
+      quality: 0.1,
     });
 
     console.log("ImagePicker result: ", result); // 전체 result 로그 출력

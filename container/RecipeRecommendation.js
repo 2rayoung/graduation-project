@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+//레시피 추천 메인 화면
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput } from 'react-native';
 
 export default function RecipeRecommendationScreen({ navigation }) {
@@ -13,6 +14,14 @@ export default function RecipeRecommendationScreen({ navigation }) {
       navigation.navigate('SearchResults', { searchQuery: search }); // 검색 결과 창으로 이동
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setSearch(''); // 화면이 포커스를 받을 때 검색어를 비움
+    });
+
+    return unsubscribe; // 리스너 정리
+  }, [navigation]);
 
   return (
     <View style={styles.container}>

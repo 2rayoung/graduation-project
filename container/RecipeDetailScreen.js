@@ -1,3 +1,4 @@
+//레시피 선택시 상태 페이지
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Linking, Alert, Modal, TextInput } from 'react-native';
 import * as Device from 'expo-device';
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#667080',
   },
   useIngredientsButton: {
-    backgroundColor: '#ff4d4d',
+    backgroundColor: '#E03333',
   },
   videoButton: {
     backgroundColor: '#667080',

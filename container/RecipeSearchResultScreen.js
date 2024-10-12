@@ -1,3 +1,4 @@
+//레시피 검색시 상세 페이지
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Alert, TouchableOpacity, Modal, TextInput, Linking } from 'react-native';
 import * as Device from 'expo-device';
@@ -164,7 +165,9 @@ export default function RecipeSearchResultScreen({ route }) {
               {/* 재료 출력 */}
               <View style={styles.card}>
                 <Text style={styles.sectionTitle}>재료:</Text>
-                <Text style={styles.recipeText}>{recipeData["재료"] ? recipeData["재료"] : "재료 정보가 없습니다."}</Text>
+                {recipeData["재료"] ? recipeData["재료"].split(',').map((ingredient, index) => (
+                  <Text key={index} style={styles.recipeText}>{ingredient.trim()}</Text>
+                )) : <Text style={styles.recipeText}>재료 정보가 없습니다.</Text>}
               </View>
 
               {/* 조리 방법 출력 */}
@@ -201,7 +204,7 @@ export default function RecipeSearchResultScreen({ route }) {
               </TouchableOpacity>
             </View>
           ) : (
-            <Text>No recipes found for "{searchQuery}"</Text>
+            <Text>레시피가 "{searchQuery}"에 대해 발견되지 않았습니다.</Text>
           )}
         </View>
       )}
@@ -306,7 +309,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#667080',
   },
   useIngredientsButton: {
-    backgroundColor: '#ff4d4d',
+    backgroundColor: '#E03333',
   },
   videoButton: {
     backgroundColor: '#667080',

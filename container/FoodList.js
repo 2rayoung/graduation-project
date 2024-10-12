@@ -1,55 +1,113 @@
-import React, { useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Image } from 'react-native';
+import axios from 'axios';
 import ReceiptInput from './ReceiptInput';  // 모달 컴포넌트 import
 import HeaderRightIcon from './HeaderRightIcon'; // HeaderRightIcon 컴포넌트 import
+import SettingsModal from './SettingsModal'; // SettingsModal 컴포넌트 import
+import API_BASE_URL from './config'; // API URL
+import * as Device from 'expo-device'; // expo-device import
+
+// 기본 Placeholder 이미지 URL
+const placeholderImage = 'https://via.placeholder.com/150';
 
 export default function FoodList({ navigation }) {
-  const [foods, setFoods] = useState([
-    { id: '1', name: '양파', storage: 'room', expiry: '2024-08-15', image: require('../assets/onion.png') },
-    { id: '2', name: '당근', storage: 'fridge', expiry: '2024-08-12', image: require('../assets/carrot1.png') },
-    { id: '3', name: '파프리카', storage: 'freezer', expiry: '2024-07-29', image: require('../assets/pepper.png') },
-    { id: '4', name: '청양고추', storage: 'fridge', expiry: '2024-09-03', image: require('../assets/chilli.png') },
-  ]);
-
+  const [foods, setFoods] = useState([]);
+  const [filteredFoods, setFilteredFoods] = useState([]); // 필터링된 식품 목록 상태 추가
   const [checkedFoods, setCheckedFoods] = useState([]);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false); // ReceiptInput 모달 상태
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false); // 설정 모달 상태
+  const [deviceId, setDeviceId] = useState(''); // 사용자 디바이스 ID 상태 추가
 
-  // 필터와 검색어에 따라 음식 목록 필터링
-  const filteredFoods = foods.filter(food => 
-    (filter === 'all' || food.storage === filter) &&
-    food.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // 사용자 디바이스 ID 가져오기
+  useEffect(() => {
+    const getDeviceId = () => {
+      const id = Device.modelId || Device.osInternalBuildId || 'unknown-device';  // 디바이스 ID 가져오기
+      setDeviceId(id);  // 상태 업데이트
+    };
 
-  const sortByExpiry = () => {
-    const sorted = [...foods].sort((a, b) => new Date(a.expiry) - new Date(b.expiry));
-    setFoods(sorted);
+    getDeviceId();
+  }, []);
+
+  // 보관 방법별로 데이터 가져오기
+  const fetchFoodData = async (storageMethod = 'all') => {
+    try {
+      let url = `${API_BASE_URL}/api/fooditems/${deviceId}`;
+      if (storageMethod !== 'all') {
+        url = `${API_BASE_URL}/api/fooditems/${deviceId}/storage/${storageMethod}`;
+      }
+
+      const response = await axios.get(url);
+      if (response.status === 200) {
+        setFoods(response.data);
+        setFilteredFoods(response.data); // 초기 데이터로 필터링 목록 설정
+      } else {
+        Alert.alert('오류', '식품 데이터를 가져오는 데 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('식품 데이터를 가져오는 중 오류 발생:', error);
+      Alert.alert('오류', '서버에 연결하는 데 실패했습니다.');
+    }
   };
 
+  // 디바이스 ID가 설정된 후 데이터 가져오기
+  useEffect(() => {
+    if (deviceId) {
+      fetchFoodData();
+    }
+  }, [deviceId]);
+
+  // 필터 버튼을 누를 때 보관 방법에 맞는 데이터를 가져옴
+  const handleFilterChange = (storageMethod) => {
+    setFilter(storageMethod);
+    fetchFoodData(storageMethod);
+  };
+
+  // 필터와 검색어에 따라 음식 목록 필터링
+  const applyFilterAndSearch = () => {
+    let filtered = foods;
+
+    if (filter !== 'all') {
+      filtered = filtered.filter(food => food.storageMethod === filter);
+    }
+
+    if (search) {
+      filtered = filtered.filter(food => 
+        food.foodName.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    setFilteredFoods(filtered);
+  };
+
+  // 등록 순서로 정렬 (필터된 데이터에서 정렬)
   const sortByRegistration = () => {
-    const sorted = [...foods].sort((a, b) => a.id.localeCompare(b.id));
-    setFoods(sorted);
+    const sorted = [...filteredFoods].sort((a, b) => a.foodId - b.foodId);
+    setFilteredFoods(sorted);
+  };
+
+  // 유통기한 순서로 정렬 (필터된 데이터에서 정렬)
+  const sortByExpiry = () => {
+    const sorted = [...filteredFoods].sort((a, b) => new Date(a.expirationDate) - new Date(b.expirationDate));
+    setFilteredFoods(sorted);
   };
 
   const openModal = () => {
-    setModalVisible(true);
+    setModalVisible(true);  // ReceiptInput 모달 열기 위한 상태 업데이트
   };
 
   const closeModal = () => {
-    setModalVisible(false);
+    setModalVisible(false); // ReceiptInput 모달 닫기 위한 상태 업데이트
   };
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <HeaderRightIcon 
-          onSortByExpiry={sortByExpiry} 
-          onSortByRegistration={sortByRegistration} 
-        />
-      ),
-    });
-  }, [navigation]);
+  const toggleSettingsModal = () => {
+    setSettingsModalVisible(!settingsModalVisible); // 설정 모달 열기/닫기
+  };
+
+  useEffect(() => {
+    applyFilterAndSearch();
+  }, [filter, search, foods]); // 필터와 검색어에 따라 필터링된 목록 업데이트
 
   const toggleCheckbox = (foodId) => {
     if (checkedFoods.includes(foodId)) {
@@ -60,59 +118,79 @@ export default function FoodList({ navigation }) {
   };
 
   const handleConfirm = () => {
-    const selectedFoods = foods.filter(food => checkedFoods.includes(food.id));
-
-    // 네비게이션 경로 수정
+    const selectedFoods = filteredFoods.filter(food => checkedFoods.includes(food.foodId));
     navigation.navigate('FoodListStack', {
       screen: 'SelectedIngredients',
       params: { selectedFoods },
     });
   };
 
+  // 헤더에 설정 아이콘 추가 (설정 모달)
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={toggleSettingsModal}>
+          <Image
+            source={require('../assets/settings-icon.png')}
+            style={{ width: 24, height: 24, marginRight: 10 }}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>조회</Text>
-        <TouchableOpacity style={styles.menuButton}>
-          {/* Menu icon can be added here if needed */}
-        </TouchableOpacity>
       </View>
-      
-      {/* Search Bar */}
+
+      {/* 검색 바 */}
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search"
+          placeholder="검색"
           value={search}
           onChangeText={setSearch}
         />
       </View>
 
-      {/* Filter Buttons */}
+      {/* 필터 버튼 */}
       <View style={styles.filterButtons}>
-        <TouchableOpacity onPress={() => setFilter('all')} style={[styles.filterButton, filter === 'all' && styles.selected]}>
+        <TouchableOpacity onPress={() => handleFilterChange('all')} style={[styles.filterButton, filter === 'all' && styles.selected]}>
           <Text style={styles.filterButtonText}>전체</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setFilter('fridge')} style={[styles.filterButton, filter === 'fridge' && styles.selected]}>
+        <TouchableOpacity onPress={() => handleFilterChange('REFRIGERATOR')} style={[styles.filterButton, filter === 'REFRIGERATOR' && styles.selected]}>
           <Text style={styles.filterButtonText}>냉장</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setFilter('freezer')} style={[styles.filterButton, filter === 'freezer' && styles.selected]}>
+        <TouchableOpacity onPress={() => handleFilterChange('FREEZER')} style={[styles.filterButton, filter === 'FREEZER' && styles.selected]}>
           <Text style={styles.filterButtonText}>냉동</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setFilter('room')} style={[styles.filterButton, filter === 'room' && styles.selected]}>
+        <TouchableOpacity onPress={() => handleFilterChange('ROOM_TEMPERATURE')} style={[styles.filterButton, filter === 'ROOM_TEMPERATURE' && styles.selected]}>
           <Text style={styles.filterButtonText}>실온</Text>
         </TouchableOpacity>
+
+        {/* 정렬 버튼 (위아래 화살표) */}
+        <HeaderRightIcon
+          onSortByExpiry={sortByExpiry}
+          onSortByRegistration={sortByRegistration}
+        />
       </View>
 
-      {/* Food List */}
+      {/* 음식 목록 */}
       <FlatList
         data={filteredFoods}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>식품이 없습니다.</Text>
+          </View>
+        )}
         renderItem={({ item }) => (
           <View style={styles.foodItem}>
             {/* 체크박스 */}
-            <TouchableOpacity onPress={() => toggleCheckbox(item.id)}>
+            <TouchableOpacity onPress={() => toggleCheckbox(item.foodId)}>
               <View style={styles.checkbox}>
-                {checkedFoods.includes(item.id) ? (
+                {checkedFoods.includes(item.foodId) ? (
                   <Text style={styles.checked}>✔️</Text>
                 ) : (
                   <Text style={styles.unchecked}>⬜</Text>
@@ -122,22 +200,26 @@ export default function FoodList({ navigation }) {
             
             {/* 식품 정보 */}
             <TouchableOpacity
-              onPress={() => navigation.navigate('FoodDetail', { foodId: item.id })}
+              onPress={() => navigation.navigate('FoodDetail', { foodId: item.foodId })}
               style={styles.foodInfoContainer}
             >
-              <Image source={item.image} style={styles.foodImage} />
+              <Image 
+                source={{ uri: item.image || placeholderImage }}
+                style={styles.foodImage} 
+              />
               <View style={styles.foodInfo}>
-                <Text style={styles.foodName}>{item.name}</Text>
-                <Text style={styles.foodExpiry}>유통기한: {item.expiry}</Text>
+                <Text style={styles.foodName}>{item.foodName}</Text>
+                <Text style={styles.foodExpiry}>유통기한: {item.expirationDate}</Text>
               </View>
             </TouchableOpacity>
           </View>
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.foodId.toString()}
+        contentContainerStyle={{ paddingBottom: 100 }}  // 여유 공간 추가
         style={styles.foodList}
       />
 
-      {/* Add Button to Open Modal */}
+      {/* 모달 열기 버튼 */}
       <TouchableOpacity onPress={openModal} style={styles.addButton}>
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
@@ -149,7 +231,14 @@ export default function FoodList({ navigation }) {
         </TouchableOpacity>
       )}
 
-      {/* Modal Component */}
+      {/* 설정 모달 */}
+      <SettingsModal
+        modalVisible={settingsModalVisible}
+        toggleModal={toggleSettingsModal}
+        navigation={navigation}
+      />
+
+      {/* ReceiptInput 모달 */}
       <ReceiptInput visible={modalVisible} onClose={closeModal} navigation={navigation} />
     </View>
   );
@@ -171,9 +260,6 @@ const styles = StyleSheet.create({
     marginTop: -5,
     fontSize: 24,
     fontWeight: 'bold',
-  },
-  menuButton: {
-    padding: 10,
   },
   searchContainer: {
     marginBottom: 20,
@@ -214,7 +300,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   foodList: {
-    marginBottom: 80,
+    flex: 1,
   },
   foodItem: {
     flexDirection: 'row',
@@ -276,6 +362,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#667080',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1, // 버튼이 목록 위로 오도록 설정
   },
   addButtonText: {
     color: '#fff',
@@ -297,5 +384,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#888',
   },
 });

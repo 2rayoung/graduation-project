@@ -31,7 +31,14 @@ function FoodListStack() {
         name="FoodList" 
         component={FoodListScreen}
         options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />, 
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('AlarmSettingsScreen')}>
+              <Image
+                source={require('./assets/settings-icon.png')} 
+                style={{ width: 24, height: 24, marginRight: 10 }}
+              />
+            </TouchableOpacity>
+          ),
         })}
       />
       <Stack.Screen name="FoodDetail" component={FoodDetailScreen} />
@@ -40,16 +47,16 @@ function FoodListStack() {
       <Stack.Screen name="StoreMethod" component={StoreMethodScreen} />
       <Stack.Screen name="ReceiptInput" component={ReceiptInputScreen} />
       <Stack.Screen 
-        name="RecipeDetail" 
-        component={RecipeDetailScreen}
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />,
-        })}
-      />
+        name="RecipeDetail" component={RecipeDetailScreen}/>
       <Stack.Screen 
         name="SelectedIngredients" 
         component={SelectedIngredientsScreen} 
         options={{ title: '선택된 재료' }}
+      />
+    <Stack.Screen 
+        name="AlarmSettingsScreen" 
+        component={AlarmSettingsScreen} 
+        options={{ title: '알림 설정' }} 
       />
     </Stack.Navigator>
   );
@@ -59,10 +66,29 @@ function FoodListStack() {
 function RecipeRecommendationStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="RecipeRecommendation" component={RecipeRecommendationScreen} />
+      <Stack.Screen 
+        name="RecipeRecommendation" 
+        component={RecipeRecommendationScreen}
+        options={({ navigation }) => ({
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('AlarmSettingsScreen')}>
+              <Image
+                source={require('./assets/settings-icon.png')} 
+                style={{ width: 24, height: 24, marginRight: 10 }}
+              />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      
       <Stack.Screen name="RecommendedList" component={RecommendedListScreen} />
       <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
       <Stack.Screen name="SearchResults" component={RecipeSearchResultScreen} />
+      <Stack.Screen 
+        name="AlarmSettingsScreen" 
+        component={AlarmSettingsScreen} 
+        options={{ title: '알림 설정' }} 
+      />
     </Stack.Navigator>
   );
 }

@@ -1,3 +1,4 @@
+//식품 추가 (직접입력 틀)
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as Device from 'expo-device';

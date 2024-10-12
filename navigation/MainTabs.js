@@ -5,6 +5,7 @@ import { Image } from 'react-native';
 import FoodListScreen from '../container/FoodList';
 import RecipeRecommendationScreen from '../container/RecipeRecommendation';
 import StatisticsScreen from '../container/Statistics';
+import AlarmSettingsScreen from '../container/AlarmSettings'; // AlarmSettingsScreen 가져오기
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -32,6 +33,15 @@ function StatisticsStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Statistics" component={StatisticsScreen} /> {/* 유효한 JSX 반환하는 컴포넌트 */}
+    </Stack.Navigator>
+  );
+}
+
+// 스택 내비게이터로 AlarmSettings 화면 관리
+function AlarmSettingsStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="AlarmSettings" component={AlarmSettingsScreen} /> {/* AlarmSettingsScreen 추가 */}
     </Stack.Navigator>
   );
 }
@@ -64,6 +74,15 @@ export default function MainTabs() {
         options={{
           tabBarIcon: ({ size }) => (
             <Image source={require('../assets/pie-chart.png')} style={{ width: size, height: size }} />
+          ),
+        }} 
+      />
+      <Tab.Screen 
+        name="AlarmSettings" // AlarmSettings 탭 추가
+        component={AlarmSettingsStack} 
+        options={{
+          tabBarIcon: ({ size }) => (
+            <Image source={require('../assets/alarm.png')} style={{ width: size, height: size }} />
           ),
         }} 
       />
