@@ -1,24 +1,25 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React from 'react';
+import { Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
-import { Image, TouchableOpacity } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+// Importing Screens (Ensure these paths are correct)
 import AddFoodScreen from './container/AddFood';
 import FoodDetailScreen from './container/FoodDetail';
 import FoodListScreen from './container/FoodList';
-import HeaderRightIcon from './container/HeaderRightIcon'; 
 import PrepMethodScreen from './container/PrepMethod';
 import ReceiptInputScreen from './container/ReceiptInput';
-import RecipeDetailScreen from './container/RecipeDetailScreen';
-import RecipeRecommendationScreen from './container/RecipeRecommendation';
-import RecommendedListScreen from './container/RecommendedList';
+import RecipeDetailScreen from './container/Recipes/RecipeDetailScreen';
+import RecipeRecommendationScreen from './container/Recipes/RecipeRecommendation';
+import RecommendedListScreen from './container/Recipes/RecommendedList';
 import StatisticsScreen from './container/Statistics';
 import StoreMethodScreen from './container/StoreMethod';
 import SplashScreenComponent from './screens/SplashScreen';
-import AlarmSettingsScreen from './container/AlarmSettingsScreen'; 
-import SelectedIngredientsScreen from './container/SelectedIngredients'; 
-import RecipeSearchResultScreen from './container/RecipeSearchResultScreen'; // 추가된 검색 결과 화면
+import AlarmSettingsScreen from './container/AlarmSettingsScreen';
+import RecipeSearchResultScreen from './container/Recipes/RecipeSearchResultScreen';
+import CustomRecipeDetailScreen from './container/Recipes/CustomRecipeDetailScreen';
+import RecipeByIngredientsScreen from './container/Recipes/RecipeByIngredientsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -34,11 +35,13 @@ function FoodListStack() {
           headerRight: () => (
             <TouchableOpacity onPress={() => navigation.navigate('AlarmSettingsScreen')}>
               <Image
-                source={require('./assets/settings-icon.png')} 
+                source={require('./assets/settings-icon.png')}  // Ensure this image exists
                 style={{ width: 24, height: 24, marginRight: 10 }}
               />
             </TouchableOpacity>
           ),
+          title: 'Food List',  // 상단에 Food List 제목 표시
+          headerTitleAlign: 'center',  // 제목을 중앙 정렬
         })}
       />
       <Stack.Screen name="FoodDetail" component={FoodDetailScreen} />
@@ -47,13 +50,10 @@ function FoodListStack() {
       <Stack.Screen name="StoreMethod" component={StoreMethodScreen} />
       <Stack.Screen name="ReceiptInput" component={ReceiptInputScreen} />
       <Stack.Screen 
-        name="RecipeDetail" component={RecipeDetailScreen}/>
-      <Stack.Screen 
-        name="SelectedIngredients" 
-        component={SelectedIngredientsScreen} 
-        options={{ title: '선택된 재료' }}
+        name="RecipeDetail" 
+        component={RecipeDetailScreen}
       />
-    <Stack.Screen 
+      <Stack.Screen 
         name="AlarmSettingsScreen" 
         component={AlarmSettingsScreen} 
         options={{ title: '알림 설정' }} 
@@ -73,17 +73,20 @@ function RecipeRecommendationStack() {
           headerRight: () => (
             <TouchableOpacity onPress={() => navigation.navigate('AlarmSettingsScreen')}>
               <Image
-                source={require('./assets/settings-icon.png')} 
+                source={require('./assets/settings-icon.png')}  // Ensure this image exists
                 style={{ width: 24, height: 24, marginRight: 10 }}
               />
             </TouchableOpacity>
           ),
         })}
       />
-      
       <Stack.Screen name="RecommendedList" component={RecommendedListScreen} />
       <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
+      <Stack.Screen name="RecipeByIngredients" component={RecipeByIngredientsScreen} />
       <Stack.Screen name="SearchResults" component={RecipeSearchResultScreen} />
+      <Stack.Screen 
+        name="CustomRecipeDetailScreen" component={CustomRecipeDetailScreen} 
+        />
       <Stack.Screen 
         name="AlarmSettingsScreen" 
         component={AlarmSettingsScreen} 
@@ -104,7 +107,7 @@ function StatisticsStack() {
           headerRight: () => (
             <TouchableOpacity onPress={() => navigation.navigate('AlarmSettingsScreen')}>
               <Image
-                source={require('./assets/settings-icon.png')} 
+                source={require('./assets/settings-icon.png')}  // Ensure this image exists
                 style={{ width: 24, height: 24, marginRight: 10 }}
               />
             </TouchableOpacity>
@@ -161,6 +164,7 @@ function MainTabs() {
   );
 }
 
+// Main App Component
 export default function App() {
   return (
     <NavigationContainer>
@@ -179,3 +183,11 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { Image } from 'react-native';
 import FoodListScreen from '../container/FoodList';
-import RecipeRecommendationScreen from '../container/RecipeRecommendation';
+import RecipeRecommendationScreen from '../container/Recips/RecipeRecommendation';
 import StatisticsScreen from '../container/Statistics';
 import AlarmSettingsScreen from '../container/AlarmSettings'; // AlarmSettingsScreen 가져오기
 

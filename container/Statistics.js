@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { PieChart } from 'react-native-svg-charts';
-import { G, Line, Circle, Text as SVGText } from 'react-native-svg';
 import { useIsFocused } from '@react-navigation/native';
 import SettingsModal from './SettingsModal'; // 설정 모달 컴포넌트 가져오기
 
 export default function StatisticsScreen({ navigation }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [consumptionData, setConsumptionData] = useState([]);
-  const [disposalData, setDisposalData] = useState([]);
-  const [costData, setCostData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false); // 모달 상태 추가
   const isFocused = useIsFocused();
 
@@ -24,19 +21,19 @@ export default function StatisticsScreen({ navigation }) {
       headerRight: () => (
         <TouchableOpacity onPress={toggleModal}>
           <Image
-            source={require('../assets/settings-icon.png')}
-            style={{ width: 28, height: 28 }}
+            source={require('../assets/settings-icon.png')} // 경로 확인 필요
+            style={{ width: 24, height: 24}}
           />
         </TouchableOpacity>
       ),
       headerRightContainerStyle: {
-        paddingRight: 20, 
+        paddingRight: 20,
       },
     });
   }, [navigation]);
 
   const toggleModal = () => {
-    setModalVisible(!modalVisible);
+    setModalVisible(!modalVisible); // 모달 열고 닫기 상태
   };
 
   const fetchData = () => {
@@ -49,7 +46,7 @@ export default function StatisticsScreen({ navigation }) {
     setConsumptionData(consumption);
   };
 
-  const data = [consumptionData, disposalData, costData][selectedIndex];
+  const data = [consumptionData][selectedIndex]; // 필요에 맞게 수정
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -70,10 +67,10 @@ export default function StatisticsScreen({ navigation }) {
         outerRadius={'95%'}
       />
 
-      {/* 설정 모달 사용 */}
+      {/* 설정 모달 */}
       <SettingsModal
         modalVisible={modalVisible}
-        toggleModal={toggleModal}
+        toggleModal={toggleModal} // 모달 열기/닫기 함수
         navigation={navigation}
       />
     </ScrollView>

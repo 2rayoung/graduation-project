@@ -1,49 +1,42 @@
-//보관방법 
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert } from 'react-native';
 import API_BASE_URL from './config';  // config.js에서 API_BASE_URL 가져옴
 
 export default function StoreMethod({ route }) {
-  const { foodId } = route.params;
+  const { name } = route.params;  // 식재료 이름 받아옴
 
   const [storeMethod, setStoreMethod] = useState('');
   const [loading, setLoading] = useState(true);
-  const [hasFetched, setHasFetched] = useState(false); // API 호출이 완료되었는지 여부를 저장
-
-  const foods = [
-    { id: '1', name: '양파' },
-    { id: '2', name: '당근' },
-    { id: '3', name: '파프리카' },
-  ];
-
-  const food = foods.find(f => f.id === foodId);
 
   useEffect(() => {
-    if (food && !hasFetched) { // 보관 방법이 없고 아직 API 호출이 완료되지 않았을 때만 요청
-      fetchStoreMethod(food.name);
-    } else if (!food) {
-      Alert.alert('오류', '해당 식품을 찾을 수 없습니다.');
-      setLoading(false);
+    if (name) {
+      fetchStoreMethod(name);  // 보관 방법 가져오기
     }
-  }, [food, hasFetched]); // hasFetched가 추가되어 중복 호출을 방지
+  }, [name]);
 
   const fetchStoreMethod = async (name) => {
-    if (hasFetched) return; // 중복 요청을 방지
-
     try {
-      const response = await fetch(`${API_BASE_URL}/api/recipes/storage?name=${encodeURIComponent(name)}`, {
-        method: 'POST',
+      // API 요청 URL에 이름을 쿼리 파라미터로 전달
+      const url = `${API_BASE_URL}/api/recipes/storage?name=${encodeURIComponent(name)}`;
+      console.log(`보관 방법 요청 URL: ${url}`);
+
+      const response = await fetch(url, {
+        method: 'POST',  // POST 요청
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
+      console.log('API 응답 상태:', response.status);
+
       if (response.ok) {
         const result = await response.text();
-        setStoreMethod(result);
-        setHasFetched(true); // API 호출 완료 상태로 설정
+        console.log('API 응답 데이터:', result);  // 받은 보관 방법 데이터 로그로 출력
+        setStoreMethod(result);  // 보관 방법 설정
       } else {
-        Alert.alert('오류', '보관 방법을 가져오는 중 문제가 발생했습니다.');
+        const errorText = await response.text();
+        console.log('오류 응답 내용:', errorText);  // 오류 응답 내용 로그 출력
+        Alert.alert('오류', `보관 방법을 가져오는 중 문제가 발생했습니다. 상태 코드: ${response.status}, 오류 메시지: ${errorText}`);
       }
     } catch (error) {
       console.error('API 요청 오류:', error);
@@ -71,7 +64,7 @@ export default function StoreMethod({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{food.name} 보관 방법</Text>
+      <Text style={styles.title}>{name} 보관 방법</Text>  {/* 식재료 이름 출력 */}
       <Text style={styles.content}>{storeMethod}</Text>
     </View>
   );

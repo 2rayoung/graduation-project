@@ -1,12 +1,17 @@
-//레시피 추천 메인 화면
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput } from 'react-native';
+import SettingsModal from '../SettingsModal'; // 설정 모달 컴포넌트 가져오기
 
 export default function RecipeRecommendationScreen({ navigation }) {
   const [search, setSearch] = useState(''); // 검색어 상태 추가
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false); // 설정 모달 상태 추가
 
-  const handlePress = (type) => {
-    navigation.navigate('RecommendedList', { type });
+  const handlePress = (type, fromMyIngredients = false) => {
+    if (type === '내 식재료로 추천 레시피') {
+      navigation.navigate('RecipeByIngredients', { fromMyIngredients: true }); // 값 명시적으로 true로 설정
+    } else {
+      navigation.navigate('RecommendedList', { type, fromMyIngredients: false });
+    }
   };
 
   const handleSearch = () => {
@@ -21,6 +26,26 @@ export default function RecipeRecommendationScreen({ navigation }) {
     });
 
     return unsubscribe; // 리스너 정리
+  }, [navigation]);
+
+  const toggleSettingsModal = () => {
+    setSettingsModalVisible(!settingsModalVisible); // 모달 열고 닫기
+  };
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={toggleSettingsModal}>
+          <Image
+            source={require('../../assets/settings-icon.png')} // 설정 아이콘 경로가 맞는지 확인
+            style={{ width: 24, height: 24 }}
+          />
+        </TouchableOpacity>
+      ),
+      headerRightContainerStyle: {
+        paddingRight: 20,
+      },
+    });
   }, [navigation]);
 
   return (
@@ -47,20 +72,23 @@ export default function RecipeRecommendationScreen({ navigation }) {
       </View>
 
       {/* Buttons */}
-      <TouchableOpacity style={styles.card} onPress={() => handlePress('인기 레시피')}>
-        <Image source={require('../assets/thumbs_up.png')} style={styles.icon} />
+      <TouchableOpacity style={styles.card} onPress={() => handlePress('인기 레시피', false)}>
+        <Image source={require('../../assets/thumbs_up.png')} style={styles.icon} />
         <Text style={styles.cardText}>인기 레시피</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.card} onPress={() => handlePress('오늘의 레시피')}>
-        <Image source={require('../assets/sun.png')} style={styles.icon} />
-        <Text style={styles.cardText}>오늘의 레시피</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.card} onPress={() => handlePress('내 식재료로 추천 레시피')}>
-        <Image source={require('../assets/fridge.png')} style={styles.icon} />
+      {/* 내 식재료로 추천 레시피를 눌렀을 때 `fromMyIngredients`를 true로 전달 */}
+      <TouchableOpacity style={styles.card} onPress={() => handlePress('내 식재료로 추천 레시피', true)}>
+        <Image source={require('../../assets/fridge.png')} style={styles.icon} />
         <Text style={styles.cardText}>내 식재료로 추천 레시피</Text>
       </TouchableOpacity>
+
+      {/* 설정 모달 */}
+      <SettingsModal
+        modalVisible={settingsModalVisible}
+        toggleModal={toggleSettingsModal}
+        navigation={navigation}
+      />
     </View>
   );
 }

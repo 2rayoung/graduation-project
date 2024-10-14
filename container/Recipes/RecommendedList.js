@@ -1,7 +1,7 @@
 //인기 레시피 클릭시 메뉴 추천 화면
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
-import API_BASE_URL from './config';  // config에서 API_BASE_URL 가져옴
+import API_BASE_URL from '../config'; // 상대 경로로 수정config에서 API_BASE_URL 가져옴
 
 const BACKEND_API_URL = `${API_BASE_URL}/api/recipes/top`;  // 인기 레시피 목록
 const RECIPE_DETAILS_API_URL = `${API_BASE_URL}/api/recipes/details`;  // 레시피 세부 정보

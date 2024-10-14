@@ -1,5 +1,10 @@
-import { AppRegistry } from 'react-native';
-import App from './App'; // App.js 파일의 경로
-import { name as appName } from './app.json'; // app.json 파일의 이름
+import React from 'react';
+import { View, Text } from 'react-native';
 
-AppRegistry.registerComponent(appName, () => App);
+export default function App() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Hello Expo!</Text>
+    </View>
+  );
+}

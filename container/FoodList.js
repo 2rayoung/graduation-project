@@ -1,30 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Image } from 'react-native';
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Image, RefreshControl } from 'react-native';
 import axios from 'axios';
-import ReceiptInput from './ReceiptInput';  // 모달 컴포넌트 import
+import ReceiptInput from './ReceiptInput'; // 모달 컴포넌트 import
 import HeaderRightIcon from './HeaderRightIcon'; // HeaderRightIcon 컴포넌트 import
-import SettingsModal from './SettingsModal'; // SettingsModal 컴포넌트 import
 import API_BASE_URL from './config'; // API URL
 import * as Device from 'expo-device'; // expo-device import
+import { Swipeable } from 'react-native-gesture-handler'; // Swipeable import
+import SettingsModal from './SettingsModal'; // 설정 모달 컴포넌트 가져오기
 
-// 기본 Placeholder 이미지 URL
-const placeholderImage = 'https://via.placeholder.com/150';
+const placeholderImage = 'https://via.placeholder.com/150'; // 기본 Placeholder 이미지 URL
 
-export default function FoodList({ navigation }) {
+export default function FoodList({ route, navigation }) {
   const [foods, setFoods] = useState([]);
   const [filteredFoods, setFilteredFoods] = useState([]); // 필터링된 식품 목록 상태 추가
   const [checkedFoods, setCheckedFoods] = useState([]);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
-  const [modalVisible, setModalVisible] = useState(false); // ReceiptInput 모달 상태
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false); // 설정 모달 상태
+  const [modalVisible, setModalVisible] = useState(false);
   const [deviceId, setDeviceId] = useState(''); // 사용자 디바이스 ID 상태 추가
+  const [refreshing, setRefreshing] = useState(false); // 새로고침 상태 추가
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false); // 설정 모달 상태 추가
+  const [newFood, setNewFood] = useState(null);  // 새로 추가된 식품 데이터 상태
 
   // 사용자 디바이스 ID 가져오기
   useEffect(() => {
     const getDeviceId = () => {
-      const id = Device.modelId || Device.osInternalBuildId || 'unknown-device';  // 디바이스 ID 가져오기
-      setDeviceId(id);  // 상태 업데이트
+      const id = Device.modelId || Device.osInternalBuildId || 'unknown-device'; // 디바이스 ID 가져오기
+      setDeviceId(id); // 상태 업데이트
     };
 
     getDeviceId();
@@ -39,6 +41,7 @@ export default function FoodList({ navigation }) {
       }
 
       const response = await axios.get(url);
+
       if (response.status === 200) {
         setFoods(response.data);
         setFilteredFoods(response.data); // 초기 데이터로 필터링 목록 설정
@@ -58,6 +61,13 @@ export default function FoodList({ navigation }) {
     }
   }, [deviceId]);
 
+  // 새로고침 핸들러 추가
+  const onRefresh = async () => {
+    setRefreshing(true); // 새로고침 상태 설정
+    await fetchFoodData(); // 데이터를 다시 가져옴
+    setRefreshing(false); // 새로고침 상태 해제
+  };
+
   // 필터 버튼을 누를 때 보관 방법에 맞는 데이터를 가져옴
   const handleFilterChange = (storageMethod) => {
     setFilter(storageMethod);
@@ -69,11 +79,11 @@ export default function FoodList({ navigation }) {
     let filtered = foods;
 
     if (filter !== 'all') {
-      filtered = filtered.filter(food => food.storageMethod === filter);
+      filtered = filtered.filter((food) => food.storageMethod === filter);
     }
 
     if (search) {
-      filtered = filtered.filter(food => 
+      filtered = filtered.filter((food) =>
         food.foodName.toLowerCase().includes(search.toLowerCase())
       );
     }
@@ -81,61 +91,94 @@ export default function FoodList({ navigation }) {
     setFilteredFoods(filtered);
   };
 
-  // 등록 순서로 정렬 (필터된 데이터에서 정렬)
-  const sortByRegistration = () => {
-    const sorted = [...filteredFoods].sort((a, b) => a.foodId - b.foodId);
-    setFilteredFoods(sorted);
-  };
-
-  // 유통기한 순서로 정렬 (필터된 데이터에서 정렬)
-  const sortByExpiry = () => {
-    const sorted = [...filteredFoods].sort((a, b) => new Date(a.expirationDate) - new Date(b.expirationDate));
-    setFilteredFoods(sorted);
-  };
-
-  const openModal = () => {
-    setModalVisible(true);  // ReceiptInput 모달 열기 위한 상태 업데이트
-  };
-
-  const closeModal = () => {
-    setModalVisible(false); // ReceiptInput 모달 닫기 위한 상태 업데이트
-  };
-
-  const toggleSettingsModal = () => {
-    setSettingsModalVisible(!settingsModalVisible); // 설정 모달 열기/닫기
-  };
-
   useEffect(() => {
     applyFilterAndSearch();
   }, [filter, search, foods]); // 필터와 검색어에 따라 필터링된 목록 업데이트
 
+  // 새로 추가된 재료를 목록에 반영하는 함수
+  const handleNewFoodAdded = (newFood) => {
+    setFoods((prevFoods) => [...prevFoods, newFood]); // 새로운 재료를 기존 목록에 추가
+    setFilteredFoods((prevFoods) => [...prevFoods, newFood]); // 필터링된 목록에도 추가
+  };
+
+useEffect(() => {
+  if (route.params?.newFood) {
+    const newFoods = route.params.newFood;
+    
+    // 새로 추가된 식품이 배열인지 확인
+    console.log("New food added:", newFoods);
+
+    if (Array.isArray(newFoods) && newFoods.length > 0) {
+      // 배열의 모든 항목을 기존 식품 목록에 추가
+      setFoods((prevFoods) => [...prevFoods, ...newFoods]); 
+      setFilteredFoods((prevFiltered) => [...prevFiltered, ...newFoods]); 
+    } else {
+      console.warn("Invalid food data:", newFoods);
+    }
+  }
+}, [route.params?.newFood]);
+
+  // 체크박스 상태 토글
   const toggleCheckbox = (foodId) => {
     if (checkedFoods.includes(foodId)) {
-      setCheckedFoods(checkedFoods.filter(id => id !== foodId));
+      setCheckedFoods(checkedFoods.filter((id) => id !== foodId));
     } else {
       setCheckedFoods([...checkedFoods, foodId]);
     }
   };
 
-  const handleConfirm = () => {
-    const selectedFoods = filteredFoods.filter(food => checkedFoods.includes(food.foodId));
-    navigation.navigate('FoodListStack', {
-      screen: 'SelectedIngredients',
-      params: { selectedFoods },
-    });
+  // 선택한 항목들을 삭제하는 함수
+  const handleDeleteChecked = async () => {
+    try {
+      for (const foodId of checkedFoods) {
+        await axios.delete(`${API_BASE_URL}/api/fooditems/delete?foodItemId=${foodId}`);
+      }
+      Alert.alert('성공', '선택된 식품들이 삭제되었습니다.');
+      setCheckedFoods([]); // 체크박스 초기화
+      fetchFoodData(); // 삭제 후 목록 다시 불러오기
+    } catch (error) {
+      console.error('삭제 중 오류 발생:', error);
+      Alert.alert('오류', '식품 삭제에 실패했습니다.');
+    }
   };
 
-  // 헤더에 설정 아이콘 추가 (설정 모달)
+  // 개별 항목 삭제 함수
+  const handleDelete = async (foodId) => {
+    try {
+      await axios.delete(`${API_BASE_URL}/api/fooditems/delete?foodItemId=${foodId}`);
+      Alert.alert('성공', '식품이 삭제되었습니다.');
+      fetchFoodData(); // 삭제 후 목록 다시 불러오기
+    } catch (error) {
+      console.error('삭제 중 오류 발생:', error);
+      Alert.alert('오류', '식품 삭제에 실패했습니다.');
+    }
+  };
+
+  // 슬라이드 액션을 위한 renderRightActions
+  const renderRightActions = (foodId) => (
+    <TouchableOpacity onPress={() => handleDelete(foodId)} style={styles.deleteButtonContainer}>
+      <Text style={styles.deleteButtonText}>삭제</Text>
+    </TouchableOpacity>
+  );
+
+  // 설정 모달 열기/닫기 함수
+  const toggleSettingsModal = () => {
+    setSettingsModalVisible(!settingsModalVisible);
+  };
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={toggleSettingsModal}>
           <Image
             source={require('../assets/settings-icon.png')}
-            style={{ width: 24, height: 24, marginRight: 10 }}
+            style={{ width: 24, height: 24 }}
           />
         </TouchableOpacity>
       ),
+      headerRightContainerStyle: {
+        paddingRight: 20, 
+      },
     });
   }, [navigation]);
 
@@ -172,74 +215,92 @@ export default function FoodList({ navigation }) {
 
         {/* 정렬 버튼 (위아래 화살표) */}
         <HeaderRightIcon
-          onSortByExpiry={sortByExpiry}
-          onSortByRegistration={sortByRegistration}
+          onSortByExpiry={() => {
+            const sorted = [...filteredFoods].sort(
+              (a, b) => new Date(a.expirationDate) - new Date(b.expirationDate)
+            );
+            setFilteredFoods(sorted);
+          }}
+          onSortByRegistration={() => {
+            const sorted = [...filteredFoods].sort((a, b) => a.foodId - b.foodId);
+            setFilteredFoods(sorted);
+          }}
         />
       </View>
 
       {/* 음식 목록 */}
       <FlatList
         data={filteredFoods}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> // 새로고침 추가
+        }
         ListEmptyComponent={() => (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>식품이 없습니다.</Text>
           </View>
         )}
         renderItem={({ item }) => (
-          <View style={styles.foodItem}>
-            {/* 체크박스 */}
-            <TouchableOpacity onPress={() => toggleCheckbox(item.foodId)}>
-              <View style={styles.checkbox}>
-                {checkedFoods.includes(item.foodId) ? (
-                  <Text style={styles.checked}>✔️</Text>
-                ) : (
-                  <Text style={styles.unchecked}>⬜</Text>
-                )}
-              </View>
-            </TouchableOpacity>
-            
-            {/* 식품 정보 */}
-            <TouchableOpacity
-              onPress={() => navigation.navigate('FoodDetail', { foodId: item.foodId })}
-              style={styles.foodInfoContainer}
-            >
-              <Image 
-                source={{ uri: item.image || placeholderImage }}
-                style={styles.foodImage} 
-              />
-              <View style={styles.foodInfo}>
-                <Text style={styles.foodName}>{item.foodName}</Text>
-                <Text style={styles.foodExpiry}>유통기한: {item.expirationDate}</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+          <Swipeable renderRightActions={() => renderRightActions(item.foodId)}>
+            <View style={styles.foodItem}>
+              {/* 체크박스 */}
+              <TouchableOpacity onPress={() => toggleCheckbox(item.foodId)}>
+                <View style={styles.checkbox}>
+                  {checkedFoods.includes(item.foodId) ? (
+                    <Text style={styles.checked}>✔️</Text>
+                  ) : (
+                    <Text style={styles.unchecked}>⬜</Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+
+              {/* 식품 정보 */}
+              <TouchableOpacity
+                onPress={() => navigation.navigate('FoodDetail', { foodId: item.foodId })}
+                style={styles.foodInfoContainer}
+              >
+                <Image
+                  source={{ uri: item.image || placeholderImage }}
+                  style={styles.foodImage}
+                />
+                <View style={styles.foodInfo}>
+                  <Text style={styles.foodName}>{item.foodName || '식품 이름 없음'}</Text>
+                  <Text style={styles.foodExpiry}>유통기한: {item.expirationDate || '정보 없음'}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </Swipeable>
         )}
-        keyExtractor={(item) => item.foodId.toString()}
-        contentContainerStyle={{ paddingBottom: 100 }}  // 여유 공간 추가
+        keyExtractor={(item) => item.foodId ? item.foodId.toString() : Math.random().toString()}
+        contentContainerStyle={{ paddingBottom: 100 }} // 여유 공간 추가
         style={styles.foodList}
       />
 
       {/* 모달 열기 버튼 */}
-      <TouchableOpacity onPress={openModal} style={styles.addButton}>
+      <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addButton}>
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
 
-      {/* 확인 버튼 */}
+      {/* 삭제 버튼 */}
       {checkedFoods.length > 0 && (
-        <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-          <Text style={styles.confirmButtonText}>확인</Text>
+        <TouchableOpacity style={styles.deleteCheckedButton} onPress={handleDeleteChecked}>
+          <Text style={styles.confirmButtonText}>삭제</Text>
         </TouchableOpacity>
       )}
+
+      {/* 모달 컴포넌트 */}
+      <ReceiptInput
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onFoodAdded={handleNewFoodAdded}
+        navigation={navigation}
+      />
 
       {/* 설정 모달 */}
       <SettingsModal
         modalVisible={settingsModalVisible}
-        toggleModal={toggleSettingsModal}
+        toggleModal={toggleSettingsModal} // 모달 열기/닫기 함수 연결
         navigation={navigation}
       />
-
-      {/* ReceiptInput 모달 */}
-      <ReceiptInput visible={modalVisible} onClose={closeModal} navigation={navigation} />
     </View>
   );
 }
@@ -352,6 +413,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#888',
   },
+  deleteButtonContainer: {
+    backgroundColor: '#DE1010',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 100,
+    height: '90%',
+    borderRadius: 8,
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
   addButton: {
     position: 'absolute',
     right: 22,
@@ -369,16 +442,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
-  confirmButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
-    backgroundColor: '#667080',
+  deleteCheckedButton: {
+    backgroundColor: '#DE1010',
     padding: 15,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
   },
   confirmButtonText: {
     color: '#fff',
