@@ -83,7 +83,7 @@ export default function SettingsModal({ modalVisible, toggleModal }) {
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>유통기한 임박 알림 설정</Text>
+          <Text style={styles.modalTitle}>유통기한 임박 식품</Text>
           
           {/* 드롭다운 피커 */}
           <Picker

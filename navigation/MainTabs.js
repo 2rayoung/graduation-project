@@ -69,7 +69,7 @@ export default function MainTabs() {
         }} 
       />
       <Tab.Screen 
-        name="Statistics" 
+        name="StatisticsStack"  // 수정: 'StatisticsStack' 네비게이터로 이동
         component={StatisticsStack} 
         options={{
           tabBarIcon: ({ size }) => (
@@ -87,6 +87,5 @@ export default function MainTabs() {
         }} 
       />
     </Tab.Navigator>
-    
   );
 }
