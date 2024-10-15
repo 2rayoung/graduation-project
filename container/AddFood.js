@@ -309,4 +309,8 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
