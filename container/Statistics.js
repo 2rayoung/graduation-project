@@ -49,7 +49,7 @@ export default function StatisticsScreen() {
     if (deviceId && !loading) {
       fetchData(selectedMonth, selectedType);
     }
-  }, [selectedMonth, deviceId]);
+  }, [selectedMonth, deviceId, selectedType]);
 
   const fetchData = async (month, type) => {
     setLoading(true);
@@ -84,8 +84,10 @@ export default function StatisticsScreen() {
 
       // 소비 분석/폐기 분석 호출
       if (type === 'CONSUMED') {
+        setWasteAnalysis(''); // 폐기 분석 초기화
         fetchConsumptionAnalysis(month);
       } else {
+        setConsumptionAnalysis(''); // 소비 분석 초기화
         fetchWasteAnalysis(month);
       }
     } catch (err) {
