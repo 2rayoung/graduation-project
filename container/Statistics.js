@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { PieChart } from 'react-native-svg-charts';
@@ -13,18 +12,6 @@ const getCurrentMonth = () => {
   const now = new Date();
   return { year: now.getFullYear(), month: now.getMonth() + 1 };
 };
-=======
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { PieChart } from 'react-native-svg-charts';
-import { useIsFocused } from '@react-navigation/native';
-import SettingsModal from './SettingsModal'; // 설정 모달 컴포넌트 가져오기
-
-export default function StatisticsScreen({ navigation }) {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [consumptionData, setConsumptionData] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false); // 모달 상태 추가
-  const isFocused = useIsFocused();
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
 
 // InquiryScreen - 여기에서 상품 통계가 표시됩니다.
 export default function InquiryScreen({ route }) {
@@ -53,7 +40,6 @@ export default function InquiryScreen({ route }) {
     }
   }, [route.params?.refresh, isFocused, selectedMonth, selectedType, deviceId]);
 
-<<<<<<< HEAD
   // API를 통해 데이터를 가져오는 함수
   const fetchConsumptionDataByType = async (month, consumptionType, deviceId, setFilteredData, setLoading, setError) => {
     setLoading(true);
@@ -91,39 +77,6 @@ export default function InquiryScreen({ route }) {
     }
     return color;
   };
-=======
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={toggleModal}>
-          <Image
-            source={require('../assets/settings-icon.png')} // 경로 확인 필요
-            style={{ width: 24, height: 24}}
-          />
-        </TouchableOpacity>
-      ),
-      headerRightContainerStyle: {
-        paddingRight: 20,
-      },
-    });
-  }, [navigation]);
-
-  const toggleModal = () => {
-    setModalVisible(!modalVisible); // 모달 열고 닫기 상태
-  };
-
-  const fetchData = () => {
-    const consumption = [
-      { key: 1, amount: 66.9, svg: { fill: '#600080' }, label: '채소' },
-      { key: 2, amount: 19.8, svg: { fill: '#9900cc' }, label: '과일' },
-      { key: 3, amount: 9.5, svg: { fill: '#c61aff' }, label: '유제품' },
-      { key: 4, amount: 3.8, svg: { fill: '#d966ff' }, label: '기타' },
-    ];
-    setConsumptionData(consumption);
-  };
-
-  const data = [consumptionData][selectedIndex]; // 필요에 맞게 수정
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
 
   const handleTabChange = (tab) => {
     setSelectedTab(tab);
@@ -157,7 +110,6 @@ export default function InquiryScreen({ route }) {
   });
 
   return (
-<<<<<<< HEAD
     <FlatList
       style={styles.container}
       ListHeaderComponent={(
@@ -227,38 +179,10 @@ export default function InquiryScreen({ route }) {
         </View>
       )}
     />
-=======
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>통계</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity 
-          style={[styles.filterButton, selectedIndex === 0 && styles.selected]}
-          onPress={() => setSelectedIndex(0)}
-        >
-          <Text style={styles.filterButtonText}>소비</Text>
-        </TouchableOpacity>
-      </View>
-
-      <PieChart
-        style={{ height: 200 }}
-        valueAccessor={({ item }) => item.amount}
-        data={data}
-        outerRadius={'95%'}
-      />
-
-      {/* 설정 모달 */}
-      <SettingsModal
-        modalVisible={modalVisible}
-        toggleModal={toggleModal} // 모달 열기/닫기 함수
-        navigation={navigation}
-      />
-    </ScrollView>
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   );
 }
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
   container: { flex: 1, padding: 20, backgroundColor: '#f5f5f5' },
   header: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
   filterContainer: { marginBottom: 20 },
@@ -275,36 +199,4 @@ const styles = StyleSheet.create({
   listItemText: { fontSize: 16, fontWeight: '600' },
   listItemCost: { fontSize: 14, color: '#444', marginTop: 5 },
   errorText: { color: 'red', textAlign: 'center', marginVertical: 20 },
-=======
-  container: {
-    flexGrow: 1,
-    padding: 20,
-    backgroundColor: '#F5F5F5',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
-    paddingHorizontal: 10,
-  },
-  filterButton: {
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: '#ddd',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  selected: {
-    backgroundColor: '#667080',
-  },
-  filterButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
 });

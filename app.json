@@ -25,25 +25,17 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-<<<<<<< HEAD
       "enableHermes": false,
       "package": "com.ss23.nangT"
-=======
-      "enableHermes": false
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-<<<<<<< HEAD
     "entryPoint": "./App.js",
     "extra": {
       "eas": {
         "projectId": "46391b6b-a8de-444d-967e-06ffe1407072"
       }
     }
-=======
-    "entryPoint": "./App.js"  
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   }
 }

@@ -4,17 +4,10 @@ import * as Device from 'expo-device';
 import API_BASE_URL from '../config';
 
 export default function RecipeDetailScreen({ route }) {
-<<<<<<< HEAD
   const { recipeDetails, recipeTitle } = route.params;
   const [ingredients, setIngredients] = useState('');
   const [instructions, setInstructions] = useState('');
   const [customRecipe, setCustomRecipe] = useState(null);
-=======
-  const { recipeDetails, recipeTitle } = route.params; // 전달받은 레시피 정보
-  const [ingredients, setIngredients] = useState('');
-  const [instructions, setInstructions] = useState('');
-  const [customRecipe, setCustomRecipe] = useState(null); // "내 재료로 만들기"로 받은 커스텀 레시피
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   const [deviceId, setDeviceId] = useState('');
   const [showUseIngredientsButton, setShowUseIngredientsButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -54,10 +47,6 @@ export default function RecipeDetailScreen({ route }) {
     Linking.openURL(youtubeSearchUrl);
   };
 
-<<<<<<< HEAD
-=======
-  // "내 재료로 만들기" 버튼 클릭 시, 백엔드에서 커스텀 레시피를 받아오는 함수
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   const handleCustomRecipe = async () => {
     try {
       const query = `?deviceId=${encodeURIComponent(deviceId)}&recipe=${encodeURIComponent(recipeTitle)}&menu=${encodeURIComponent(recipeTitle)}`;
@@ -66,11 +55,7 @@ export default function RecipeDetailScreen({ route }) {
         headers: {
           'Content-Type': 'application/json',
         },
-<<<<<<< HEAD
         body: JSON.stringify({ ingredients: ['carrot', 'onion'] }),  
-=======
-        body: JSON.stringify({ ingredients: ['carrot', 'onion'] }),  // 예시로 재료 리스트
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
       });
 
       const responseText = await response.text();
@@ -229,11 +214,7 @@ export default function RecipeDetailScreen({ route }) {
                       </TouchableOpacity>
                     </View>
                     <TouchableOpacity onPress={() => handleDeleteIngredient(index)}>
-<<<<<<< HEAD
                       <Text style={styles.deleteText}>X</Text>
-=======
-                      <Text style={styles.deleteText}>삭제</Text>
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
                     </TouchableOpacity>
                   </View>
                 ))
@@ -285,11 +266,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     lineHeight: 24,
-<<<<<<< HEAD
     flex: 1, // 텍스트 줄바꿈 적용을 위해 flex 추가
     flexWrap: 'wrap', // 긴 텍스트 자동 줄바꿈
-=======
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   },
   button: {
     padding: 15,
@@ -298,12 +276,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 8,
   },
-<<<<<<< HEAD
-=======
-  customRecipeButton: {
-    backgroundColor: '#667080',
-  },
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   useIngredientsButton: {
     backgroundColor: '#DE1010',
   },
@@ -325,13 +297,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
-<<<<<<< HEAD
     width: '85%', // 너비 확장
     maxHeight: '75%',
-=======
-    width: '80%',
-    maxHeight: '80%',
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   },
   modalHeader: {
     flexDirection: 'row',
@@ -352,19 +319,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 10,
-<<<<<<< HEAD
     flexWrap: 'wrap', // 줄바꿈 허용
-=======
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   },
   amountContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-<<<<<<< HEAD
     flex: 1, // 전체 공간에서 균형 맞추기 위해 추가
     justifyContent: 'flex-start', // 왼쪽 정렬
-=======
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   },
   input: {
     borderWidth: 1,
@@ -375,7 +336,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   amountButton: {
-<<<<<<< HEAD
     fontSize: 20,
     fontWeight: 'bold',
     paddingHorizontal: 10,
@@ -388,16 +348,6 @@ const styles = StyleSheet.create({
   customRecipeButton: {
     backgroundColor: '#667080',
   },
-=======
-    fontSize: 24,
-    fontWeight: 'bold',
-    paddingHorizontal: 10,
-  },
-  deleteText: {
-    color: '#ff4d4d',
-    fontSize: 14,
-  },
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   closeButton: {
     padding: 10,
   },
@@ -409,8 +359,4 @@ const styles = StyleSheet.create({
   useButton: {
     backgroundColor: '#DE1010',
   },
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0

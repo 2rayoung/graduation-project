@@ -76,11 +76,6 @@ function StatisticsStack() {
           headerTitleAlign: 'center',
         }}
       />
-      <Stack.Screen 
-        name="AlarmSettingsScreen" 
-        component={AlarmSettingsScreen} 
-        options={{ title: '알림 설정' }} 
-      />
     </Stack.Navigator>
   );
 }
