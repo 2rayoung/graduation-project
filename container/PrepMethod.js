@@ -16,7 +16,7 @@ export default function PrepMethod({ route }) {
     try {
       // API 요청 URL에 이름을 쿼리 파라미터로 전달
       const url = `${API_BASE_URL}/api/recipes/handling?name=${encodeURIComponent(name)}`;
-      console.log(`손질 방법 요청 URL: ${url}`);
+
   
       const response = await fetch(url, {
         method: 'POST',  // POST 요청
@@ -25,11 +25,9 @@ export default function PrepMethod({ route }) {
         },
       });
   
-      console.log('API 응답 상태:', response.status);
   
       if (response.ok) {
         const result = await response.text();
-        console.log('API 응답 데이터:', result);  // 받은 손질 방법 데이터 로그로 출력
         setPrepMethod(result);  // 손질 방법 설정
       } else {
         const errorText = await response.text();

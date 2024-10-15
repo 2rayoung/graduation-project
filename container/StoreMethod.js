@@ -1,37 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert } from 'react-native';
-import API_BASE_URL from './config';  // config.js에서 API_BASE_URL 가져옴
+import API_BASE_URL from './config'; // API_BASE_URL 가져오기
 
 export default function StoreMethod({ route }) {
-  const { name } = route.params;  // 식재료 이름 받아옴
+  const { foodId } = route.params;
 
   const [storeMethod, setStoreMethod] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (name) {
-      fetchStoreMethod(name);  // 보관 방법 가져오기
-    }
-  }, [name]);
+    fetchStoreMethod(foodId);  // 보관 방법 가져오기
+  }, [foodId]);
 
   const fetchStoreMethod = async (name) => {
     try {
       // API 요청 URL에 이름을 쿼리 파라미터로 전달
       const url = `${API_BASE_URL}/api/recipes/storage?name=${encodeURIComponent(name)}`;
-      console.log(`보관 방법 요청 URL: ${url}`);
-
+  
       const response = await fetch(url, {
         method: 'POST',  // POST 요청
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
-      console.log('API 응답 상태:', response.status);
-
+  
       if (response.ok) {
         const result = await response.text();
-        console.log('API 응답 데이터:', result);  // 받은 보관 방법 데이터 로그로 출력
         setStoreMethod(result);  // 보관 방법 설정
       } else {
         const errorText = await response.text();
@@ -64,7 +58,7 @@ export default function StoreMethod({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{name} 보관 방법</Text>  {/* 식재료 이름 출력 */}
+      <Text style={styles.title}>보관 방법</Text>
       <Text style={styles.content}>{storeMethod}</Text>
     </View>
   );
