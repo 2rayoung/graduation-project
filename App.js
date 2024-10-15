@@ -1,135 +1,94 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React from 'react';
+import { Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
-import { Image, TouchableOpacity } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+// Importing Screens
 import AddFoodScreen from './container/AddFood';
 import FoodDetailScreen from './container/FoodDetail';
 import FoodListScreen from './container/FoodList';
-import HeaderRightIcon from './container/HeaderRightIcon'; 
-import MaterialManagementScreen from './container/MaterialManagement';
 import PrepMethodScreen from './container/PrepMethod';
 import ReceiptInputScreen from './container/ReceiptInput';
 import RecipeDetailScreen from './container/Recipes/RecipeDetailScreen';
 import RecipeRecommendationScreen from './container/Recipes/RecipeRecommendation';
 import RecommendedListScreen from './container/Recipes/RecommendedList';
-import CustomRecipeDetailScreen from './container/Recipes/CustomRecipeDetailScreen'
 import StatisticsScreen from './container/Statistics';
 import StoreMethodScreen from './container/StoreMethod';
 import SplashScreenComponent from './src/SplashScreen';
-import RecipeByIngredientScreen from './container/Recipes/RecipeByIngredientScreen';
-import AlarmSettingsScreen from './container/AlarmSettingsScreen'; // 알림 설정 화면 추가
-import SelectedIngredientsScreen from './container/SelectedIngredients'; // 선택된 재료 화면 추가
+import RecipeSearchResultScreen from './container/Recipes/RecipeSearchResultScreen';
+import CustomRecipeDetailScreen from './container/Recipes/CustomRecipeDetailScreen';
+import RecipeByIngredientsScreen from './container/Recipes/RecipeByIngredientscreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+
+
+// Food List Stack Navigator (알림 설정 유지)
 function FoodListStack() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: '#F5F5F5' }, 
-        headerTintColor: '#000000', 
-        headerTitleStyle: { fontWeight: 'bold' }, 
-      }}
-    >
+    <Stack.Navigator>
       <Stack.Screen 
         name="FoodList" 
         component={FoodListScreen}
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />, 
-        })}
       />
       <Stack.Screen name="FoodDetail" component={FoodDetailScreen} />
       <Stack.Screen name="AddFood" component={AddFoodScreen} />
       <Stack.Screen name="PrepMethod" component={PrepMethodScreen} />
       <Stack.Screen name="StoreMethod" component={StoreMethodScreen} />
       <Stack.Screen name="ReceiptInput" component={ReceiptInputScreen} />
-      <Stack.Screen name="MaterialManagement" component={MaterialManagementScreen} />
-      <Stack.Screen name="Statistics" component={StatisticsScreen} />
-      <Stack.Screen 
-        name="RecipeDetail" 
-        component={RecipeDetailScreen}
-        options={({ navigation }) => ({
-          headerRight: () => <HeaderRightIcon navigation={navigation} />,
-        })}
-      />
-      <Stack.Screen 
-        name="SelectedIngredients" 
-        component={SelectedIngredientsScreen} 
-        options={{ title: '선택된 재료' }}  // 선택된 재료 화면 추가
-      />
+      <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
     </Stack.Navigator>
   );
 }
 
+// Recipe Recommendation Stack Navigator (알림 설정 제거됨)
 function RecipeRecommendationStack() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: '#F5F5F5' }, 
-        headerTintColor: '#000000', 
-        headerTitleStyle: { fontWeight: 'bold' }, 
-      }}
-    >
-      <Stack.Screen name="RecipeRecommendation" component={RecipeRecommendationScreen} />
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="RecipeRecommendation" 
+        component={RecipeRecommendationScreen}
+        options={{
+          title: 'Recipe Recommendation',
+          headerTitleAlign: 'center',
+        }}
+      />
       <Stack.Screen name="RecommendedList" component={RecommendedListScreen} />
-      <Stack.Screen name="MaterialManagement" component={MaterialManagementScreen} />
       <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
-      <Stack.Screen name="RecipeByIngredients" component={RecipeByIngredientScreen} />
-      <Stack.Screen name='CustomRecipeDetailScreen' component={CustomRecipeDetailScreen}/>
+      <Stack.Screen name="RecipeByIngredients" component={RecipeByIngredientsScreen} />
+      <Stack.Screen name="SearchResults" component={RecipeSearchResultScreen} />
+      <Stack.Screen name="CustomRecipeDetailScreen" component={CustomRecipeDetailScreen} />
     </Stack.Navigator>
   );
 }
 
+// Statistics Stack Navigator (알림 설정 제거됨)
 function StatisticsStack() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: '#F5F5F5' }, 
-        headerTintColor: '#000000', 
-        headerTitleStyle: { fontWeight: 'bold' }, 
-      }}
-    >
+    <Stack.Navigator>
       <Stack.Screen 
         name="Statistics" 
         component={StatisticsScreen}
-        options={({ navigation }) => ({
-          headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate('AlarmSettingsScreen')}>
-              <Image
-                source={require('./assets/settings-icon.png')} 
-                style={{ width: 24, height: 24, marginRight: 10 }}
-              />
-            </TouchableOpacity>
-          ),
-        })}
-      />
-      <Stack.Screen 
-        name="AlarmSettingsScreen" 
-        component={AlarmSettingsScreen} 
-        options={{ title: '알림 설정' }}  // 알림 설정 스크린 추가
+        options={{
+          title: 'Statistics',
+          headerTitleAlign: 'center',
+        }}
       />
     </Stack.Navigator>
   );
 }
 
+// Bottom Tab Navigator for main tabs
 function MainTabs() {
   return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarActiveTintColor: '#000000',   
-        tabBarInactiveTintColor: 'lightgray', 
-      }}
-    >
+    <Tab.Navigator>
       <Tab.Screen 
         name="FoodListStack" 
         component={FoodListStack} 
         options={{
-          tabBarIcon: ({ size }) => (
-            <Image source={require('./assets/menu4.png')} style={{ width: size, height: size }} />
-          ),
+          tabBarIcon: ({ size }) => <Image source={require('./assets/menu4.png')} style={{ width: size, height: size }} />,
           tabBarLabel: 'Food List',
           headerShown: false,
         }} 
@@ -138,9 +97,7 @@ function MainTabs() {
         name="RecipeRecommendationStack" 
         component={RecipeRecommendationStack} 
         options={{
-          tabBarIcon: ({ size }) => (
-            <Image source={require('./assets/food.png')} style={{ width: size, height: size }} />
-          ),
+          tabBarIcon: ({ size }) => <Image source={require('./assets/food.png')} style={{ width: size, height: size }} />,
           tabBarLabel: 'Recipes',
           headerShown: false,
         }} 
@@ -149,9 +106,7 @@ function MainTabs() {
         name="StatisticsStack" 
         component={StatisticsStack} 
         options={{
-          tabBarIcon: ({ size }) => (
-            <Image source={require('./assets/pie-chart.png')} style={{ width: size, height: size }} />
-          ),
+          tabBarIcon: ({ size }) => <Image source={require('./assets/pie-chart.png')} style={{ width: size, height: size }} />,
           tabBarLabel: 'Statistics',
           headerShown: false,
         }} 
@@ -160,6 +115,7 @@ function MainTabs() {
   );
 }
 
+// Main App Component
 export default function App() {
   return (
     <NavigationContainer>
@@ -178,3 +134,11 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

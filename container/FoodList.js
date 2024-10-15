@@ -171,13 +171,13 @@ useEffect(() => {
       headerRight: () => (
         <TouchableOpacity onPress={toggleSettingsModal}>
           <Image
-            source={require('../assets/settings-icon.png')}
-            style={{ width: 24, height: 24 }}
+            source={require('../assets/bell-icon.png')}
+            style={{ width: 24, height: 24, marginRight: 1 }}
           />
         </TouchableOpacity>
       ),
       headerRightContainerStyle: {
-        paddingRight: 20, 
+        paddingRight: 10, 
       },
     });
   }, [navigation]);

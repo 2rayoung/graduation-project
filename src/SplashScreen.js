@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 
 SplashScreen.preventAutoHideAsync();
-  
+
 export default function SplashScreenComponent({ navigation }) {
   useEffect(() => {
     setTimeout(async () => {

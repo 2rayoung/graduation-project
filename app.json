@@ -17,16 +17,25 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ss23.nangT"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "enableHermes": false,
+      "package": "com.ss23.nangT"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "entryPoint": "./App.js",
+    "extra": {
+      "eas": {
+        "projectId": "46391b6b-a8de-444d-967e-06ffe1407072"
+      }
     }
   }
 }
