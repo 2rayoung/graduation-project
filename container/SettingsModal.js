@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, ScrollView, Alert } from 'react-native';
 import axios from 'axios';
@@ -75,12 +74,6 @@ export default function SettingsModal({ modalVisible, toggleModal }) {
     navigation.navigate('FoodDetail', { foodId }); // 'FoodDetail' 화면으로 이동, foodId 전달
   };
 
-=======
-import React from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
-
-export default function SettingsModal({ modalVisible, toggleModal, navigation }) {
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   return (
     <Modal
       animationType="slide"
@@ -90,7 +83,6 @@ export default function SettingsModal({ modalVisible, toggleModal, navigation })
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-<<<<<<< HEAD
           <Text style={styles.modalTitle}>유통기한 임박 알림 설정</Text>
           
           {/* 드롭다운 피커 */}
@@ -122,19 +114,6 @@ export default function SettingsModal({ modalVisible, toggleModal, navigation })
 
           <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
             <Text style={styles.closeButtonText}>닫기</Text>
-=======
-          <Text style={styles.modalTitle}>설정</Text>
-          <TouchableOpacity onPress={() => {
-            toggleModal(); // 모달 닫기
-            setTimeout(() => {
-              navigation.navigate('AlarmSettingsScreen'); // 알림 설정 화면으로 이동
-            }, 300); // 모달 애니메이션 완료 후 화면 이동
-          }}>
-            <Text style={{ marginVertical: 10 }}>알림설정</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={toggleModal}>
-            <Text style={styles.closeButton}>닫기</Text>
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
           </TouchableOpacity>
         </View>
       </View>
@@ -150,12 +129,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
-<<<<<<< HEAD
     width: '85%',
     height: '70%',
-=======
-    width: 300,
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
@@ -166,7 +141,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 15,
   },
-<<<<<<< HEAD
   picker: {
     width: '100%',
     marginBottom: 20,
@@ -200,10 +174,4 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
-=======
-  closeButton: {
-    color: 'red',
-    marginTop: 20,
-  },
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
 });

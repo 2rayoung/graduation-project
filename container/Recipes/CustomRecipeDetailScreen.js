@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Alert, TouchableOpacity, Linking } from 'react-native';
-=======
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Alert, TouchableOpacity, Modal, TextInput, Linking } from 'react-native';
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
 import * as Device from 'expo-device';
 import API_BASE_URL from '../config'; // API_BASE_URL 가져오기
 
@@ -12,12 +8,6 @@ export default function CustomRecipeDetailScreen({ route }) {
   const [loading, setLoading] = useState(true);
   const [recipeData, setRecipeData] = useState(null);
   const [deviceId, setDeviceId] = useState('');
-<<<<<<< HEAD
-=======
-  const [showModal, setShowModal] = useState(false);
-  const [parsedIngredients, setParsedIngredients] = useState([]); // 파싱된 재료 목록
-  const [editedIngredients, setEditedIngredients] = useState([]); // 수정된 재료 목록
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
 
   useEffect(() => {
     const fetchDeviceId = async () => {
@@ -53,11 +43,6 @@ export default function CustomRecipeDetailScreen({ route }) {
             })
           : [];
           
-<<<<<<< HEAD
-=======
-        setParsedIngredients(initialIngredients);
-        setEditedIngredients(initialIngredients); // 재료 사용 모달에서 수정될 수 있도록 초기화
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
       } catch (error) {
         console.error('Error fetching recipe data:', error);
         Alert.alert('오류', '레시피 정보를 가져오는 중 문제가 발생했습니다.');
@@ -69,54 +54,6 @@ export default function CustomRecipeDetailScreen({ route }) {
     fetchRecipe();
   }, [recipeTitle]);
 
-<<<<<<< HEAD
-=======
-  const handleDeleteIngredient = (index) => {
-    const updatedIngredients = editedIngredients.filter((_, i) => i !== index);
-    setEditedIngredients(updatedIngredients);
-  };
-
-  const handleEditIngredient = (index, delta) => {
-    const updatedIngredients = [...editedIngredients];
-    const currentAmount = parseFloat(updatedIngredients[index][1]);
-    const newAmount = currentAmount + delta;
-
-    if (newAmount > 0) { 
-      updatedIngredients[index][1] = newAmount.toFixed(2);
-      setEditedIngredients(updatedIngredients);
-    }
-  };
-
-  const handleConsumeIngredients = async () => {
-    try {
-      const body = {};
-      editedIngredients.forEach(([name, amount]) => {
-        body[name] = amount;
-      });
-
-      const query = `?deviceId=${encodeURIComponent(deviceId)}`;
-      const response = await fetch(`${API_BASE_URL}/api/fooditems/consume-ingredients${query}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-
-      const responseText = await response.text();
-      if (!response.ok) {
-        throw new Error(`서버 오류: 상태 코드 ${response.status}, 응답 내용: ${responseText}`);
-      }
-
-      Alert.alert('성공', '재료를 성공적으로 사용했습니다.');
-      setShowModal(false); 
-    } catch (error) {
-      console.error('재료 사용 오류:', error);
-      Alert.alert('오류', '재료를 사용하는 중 문제가 발생했습니다.');
-    }
-  };
-
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {loading ? (
@@ -142,14 +79,6 @@ export default function CustomRecipeDetailScreen({ route }) {
                 : "조리 방법 정보가 없습니다."}</Text>
               </View>
 
-<<<<<<< HEAD
-=======
-              {/* 재료 사용 버튼 */}
-              <TouchableOpacity style={[styles.button, styles.useIngredientsButton]} onPress={() => setShowModal(true)}>
-                <Text style={styles.buttonText}>재료 사용</Text>
-              </TouchableOpacity>
-
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
               {/* 레시피 영상 보기 버튼 */}
               <TouchableOpacity style={[styles.button, styles.videoButton]} onPress={() => {
                 const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(recipeTitle)}`;
@@ -163,61 +92,6 @@ export default function CustomRecipeDetailScreen({ route }) {
           )}
         </View>
       )}
-<<<<<<< HEAD
-=======
-
-      {/* 재료 사용 모달 */}
-      <Modal
-        visible={showModal}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setShowModal(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>사용할 재료 목록</Text>
-              <TouchableOpacity style={styles.closeButton} onPress={() => setShowModal(false)}>
-                <Text style={styles.closeButtonText}>X</Text>
-              </TouchableOpacity>
-            </View>
-
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-              {editedIngredients.length > 0 ? (
-                editedIngredients.map(([ingredient, amount], index) => (
-                  <View key={index} style={styles.ingredientRow}>
-                    <Text style={styles.recipeText}>{ingredient}</Text>
-                    <View style={styles.amountContainer}>
-                      <TouchableOpacity onPress={() => handleEditIngredient(index, -1)}>
-                        <Text style={styles.amountButton}>-</Text>
-                      </TouchableOpacity>
-                      <TextInput
-                        style={styles.input}
-                        value={amount.toString()}
-                        keyboardType="numeric"
-                        editable={false}
-                      />
-                      <TouchableOpacity onPress={() => handleEditIngredient(index, 1)}>
-                        <Text style={styles.amountButton}>+</Text>
-                      </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity onPress={() => handleDeleteIngredient(index)}>
-                      <Text style={styles.deleteText}>삭제</Text>
-                    </TouchableOpacity>
-                  </View>
-                ))
-              ) : (
-                <Text>재료를 가져오는 중...</Text>
-              )}
-
-              <TouchableOpacity style={[styles.button, styles.useButton]} onPress={handleConsumeIngredients}>
-                <Text style={styles.buttonText}>사용</Text>
-              </TouchableOpacity>
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
     </ScrollView>
   );
 }
@@ -255,11 +129,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     lineHeight: 24,
-<<<<<<< HEAD
     flex: 1, // 텍스트 줄바꿈 적용을 위해 flex 추가
     flexWrap: 'wrap', // 긴 텍스트 자동 줄바꿈
-=======
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   },
   button: {
     padding: 15,
@@ -268,12 +139,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 8,
   },
-<<<<<<< HEAD
-=======
-  useIngredientsButton: {
-    backgroundColor: '#DE1010',
-  },
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   videoButton: {
     backgroundColor: '#667080',
   },
@@ -282,72 +147,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-<<<<<<< HEAD
-=======
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-    maxHeight: '80%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  scrollContainer: {
-    paddingBottom: 20,
-  },
-  ingredientRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  amountContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 5,
-    marginHorizontal: 10,
-    width: 50,
-    textAlign: 'center',
-  },
-  amountButton: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    paddingHorizontal: 10,
-  },
-  deleteText: {
-    color: '#ff4d4d',
-    fontSize: 14,
-  },
-  closeButton: {
-    padding: 10,
-  },
-  closeButtonText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  useButton: {
-    backgroundColor: '#DE1010',
-  },
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
 });

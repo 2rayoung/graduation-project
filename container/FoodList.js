@@ -171,22 +171,13 @@ useEffect(() => {
       headerRight: () => (
         <TouchableOpacity onPress={toggleSettingsModal}>
           <Image
-<<<<<<< HEAD
             source={require('../assets/bell-icon.png')}
             style={{ width: 24, height: 24, marginRight: 1 }}
-=======
-            source={require('../assets/settings-icon.png')}
-            style={{ width: 24, height: 24 }}
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
           />
         </TouchableOpacity>
       ),
       headerRightContainerStyle: {
-<<<<<<< HEAD
         paddingRight: 10, 
-=======
-        paddingRight: 20, 
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
       },
     });
   }, [navigation]);

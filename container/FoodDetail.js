@@ -52,7 +52,6 @@ export default function FoodDetail({ route, navigation }) {
   }
 
   const handleConsume = async () => {
-<<<<<<< HEAD
   try {
     const response = await axios.put(`${API_BASE_URL}/api/fooditems/quantity`, null, {
       params: {
@@ -71,26 +70,6 @@ export default function FoodDetail({ route, navigation }) {
       ]);
       fetchFoodDetail();
     } else {
-=======
-    try {
-      const response = await axios.put(`${API_BASE_URL}/api/fooditems/quantity`, null, {
-        params: {
-          foodItemId: food.foodId,
-          quantityToUpdate: consumptionValue,
-          consumptionType: 'CONSUMED'
-        }
-      });
-      if (response.status === 200) {
-        Alert.alert('소비 완료', `${food.foodName} ${consumptionValue}개를 소비했습니다.`, [
-          { text: '확인', onPress: () => navigation.navigate('FoodList', { refresh: true }) }
-        ]);
-        fetchFoodDetail();
-      } else {
-        Alert.alert('오류', '소비 처리 중 오류가 발생했습니다.');
-      }
-    } catch (error) {
-      console.error('소비 처리 중 오류 발생:', error);
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
       Alert.alert('오류', '소비 처리 중 오류가 발생했습니다.');
     }
   } catch (error) {
@@ -99,7 +78,6 @@ export default function FoodDetail({ route, navigation }) {
   }
 };
 
-<<<<<<< HEAD
 const handleDispose = async () => {
   try {
     const response = await axios.put(`${API_BASE_URL}/api/fooditems/quantity`, null, {
@@ -120,28 +98,6 @@ const handleDispose = async () => {
       fetchFoodDetail();
     } else {
       Alert.alert('오류', '폐기 처리 중 오류가 발생했습니다.');
-=======
-  const handleDispose = async () => {
-    try {
-      const response = await axios.put(`${API_BASE_URL}/api/fooditems/quantity`, null, {
-        params: {
-          foodItemId: food.foodId,
-          quantityToUpdate: consumptionValue,  // 사용자가 선택한 수량만큼 배출
-          consumptionType: 'DISCARDED'
-        }
-      });
-      if (response.status === 200) {
-        Alert.alert('음식물 배출', `${food.foodName} ${consumptionValue}개를 배출했습니다.`, [
-          { text: '확인', onPress: () => navigation.navigate('FoodList', { refresh: true }) }
-        ]);
-        fetchFoodDetail();
-      } else {
-        Alert.alert('오류', '배출 처리 중 오류가 발생했습니다.');
-      }
-    } catch (error) {
-      console.error('배출 처리 중 오류 발생:', error);
-      Alert.alert('오류', '배출 처리 중 오류가 발생했습니다.');
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
     }
   } catch (error) {
     console.error('폐기 처리 중 오류 발생:', error);
@@ -149,11 +105,8 @@ const handleDispose = async () => {
   }
 };
 
-<<<<<<< HEAD
   
 
-=======
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   // "손질 방법" 버튼 클릭 시 손질 방법 화면으로 이동
   const handlePrepMethod = () => {
     navigation.navigate('PrepMethod', { foodId: food.foodName });

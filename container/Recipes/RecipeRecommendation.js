@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput } from 'react-native';
-<<<<<<< HEAD
+
 
 export default function RecipeRecommendationScreen({ navigation }) {
   const [search, setSearch] = useState(''); // 검색어 상태 추가
-=======
-import SettingsModal from '../SettingsModal'; // 설정 모달 컴포넌트 가져오기
 
-export default function RecipeRecommendationScreen({ navigation }) {
-  const [search, setSearch] = useState(''); // 검색어 상태 추가
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false); // 설정 모달 상태 추가
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
 
   const handlePress = (type, fromMyIngredients = false) => {
     if (type === '내 식재료로 추천 레시피') {
@@ -34,40 +28,13 @@ export default function RecipeRecommendationScreen({ navigation }) {
     return unsubscribe; // 리스너 정리
   }, [navigation]);
 
-<<<<<<< HEAD
-=======
-  const toggleSettingsModal = () => {
-    setSettingsModalVisible(!settingsModalVisible); // 모달 열고 닫기
-  };
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={toggleSettingsModal}>
-          <Image
-            source={require('../../assets/settings-icon.png')} // 설정 아이콘 경로가 맞는지 확인
-            style={{ width: 24, height: 24 }}
-          />
-        </TouchableOpacity>
-      ),
-      headerRightContainerStyle: {
-        paddingRight: 20,
-      },
-    });
-  }, [navigation]);
 
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   return (
     <View style={styles.container}>
       {/* Header with Title */}
       <View style={styles.header}>
         <Text style={styles.title}>레시피 추천</Text>
-<<<<<<< HEAD
-=======
-        <TouchableOpacity style={styles.menuButton}>
-          {/* 필요한 경우 여기에 메뉴 버튼 또는 다른 아이콘을 추가할 수 있습니다. */}
-        </TouchableOpacity>
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
       </View>
 
       {/* Search Bar */}
@@ -94,16 +61,6 @@ export default function RecipeRecommendationScreen({ navigation }) {
         <Image source={require('../../assets/fridge.png')} style={styles.icon} />
         <Text style={styles.cardText}>내 식재료로 추천 레시피</Text>
       </TouchableOpacity>
-<<<<<<< HEAD
-=======
-
-      {/* 설정 모달 */}
-      <SettingsModal
-        modalVisible={settingsModalVisible}
-        toggleModal={toggleSettingsModal}
-        navigation={navigation}
-      />
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
     </View>
   );
 }
@@ -125,12 +82,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
-<<<<<<< HEAD
-=======
-  menuButton: {
-    // 메뉴 버튼에 대한 스타일을 여기에 추가할 수 있습니다.
-  },
->>>>>>> cd222376ff367cc164ee8483e2de7e352228f8f0
   searchContainer: {
     marginBottom: 30,
     backgroundColor: '#FFFFFF',
